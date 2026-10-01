@@ -149,6 +149,8 @@ h1{font-size:1.5rem; margin:4px 0 2px; letter-spacing:.3px;}
 a.btn{text-decoration:none; text-align:center; display:block;}
 .speak-sentence{font-size:1.4rem; font-weight:700; line-height:1.5; margin:14px 0 18px;}
 .heard{font-size:.9rem; color:var(--sub); margin-top:8px;}
+.certimg{width:100%; max-width:640px; border-radius:10px; border:1px solid var(--line); margin:10px auto; display:block;}
+.certbanner{background:linear-gradient(135deg,#c9622b,#7a2f10); color:#fff; padding:10px 14px; border-radius:12px; font-weight:700; margin:8px 0;}
 .gain{display:inline-block; background:var(--goodbg); color:var(--goodink); padding:4px 12px; border-radius:20px; font-weight:700; font-size:.85rem; margin-bottom:8px;}
 footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
 .resetbtn{background:none; border:none; color:var(--sub); font-size:.78rem; cursor:pointer; text-decoration:underline; margin-top:8px;}
@@ -204,6 +206,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div class="actions">
       <button class="btn" id="btn-mistakes">📓 Mistakes</button>
       <button class="btn" id="btn-revision">🔁 Quick Revision</button>
+      <button class="btn" id="btn-certs">🎓 Certificates</button>
     </div>
 
     <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" autocomplete="off">
@@ -4589,7 +4592,7 @@ const K_PROG='fea_quest_progress', K_META='fea_quest_meta';
 let progress=load(K_PROG,{});
 let meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:{}},load(K_META,{}));
 meta.settings=Object.assign({sound:true,voice:true,hindi:true},meta.settings||{});
-meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{};
+meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{};
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
@@ -4602,7 +4605,7 @@ function syncToSheet(){
   try{
     const r=rankFor(meta.xp);
     const payload={name:studentName, levelsDone:Object.keys(progress).length, totalLevels:LEVELS.length,
-      stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak()};
+      stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak(), certificates:Object.keys(meta.certs||{}).length};
     fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
   }catch(e){}
 }
@@ -4721,6 +4724,7 @@ function renderMap(){
   else { $('rank-fill').style.width='100%'; $('rank-text').textContent='Top rank reached! 👑'; }
   renderToggles();
   $('btn-mistakes').textContent='📓 Mistakes ('+meta.mistakes.length+')';
+  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')';
 
   const nxt=nextLevel(), cw=$('continue-wrap'); cw.innerHTML='';
   const c=document.createElement('div'); c.className='continue';
@@ -4948,6 +4952,122 @@ function makeCard(o){
 function cardHtml(url){ return url?('<img class="scorecard" alt="Score card" src="'+url+'"><div class="small">📸 Long-press the card to save it, or share on WhatsApp</div>'):''; }
 function shareText(o){ return 'I scored '+o.score+'/'+o.total+' '+'⭐'.repeat(o.stars)+' on "'+o.title+'" in Rohit Sir English Quest! Rank: '+rankFor(meta.xp).name+'. Try it: '+(window.location?window.location.href:''); }
 
+
+/* ================= CERTIFICATES (every 10 passed levels) ================= */
+const CERT_EVERY=10;
+function passedCount(){ return Object.values(progress).filter(p=>(p.stars||0)>=1).length; }
+function pad(n,w){ return String(n).padStart(w,'0'); }
+function checkCerts(){
+  const earned=Math.floor(passedCount()/CERT_EVERY), fresh=[];
+  for(let n=1;n<=earned;n++){
+    if(meta.certs[n]) continue;
+    const d=new Date();
+    const code=Math.random().toString(36).slice(2,6).toUpperCase();
+    meta.certs[n]={name:studentName||'Student',date:dayStr(d),id:'RSEQ-'+d.getFullYear()+'-'+pad(n*CERT_EVERY,3)+'-'+code,
+      levels:n*CERT_EVERY,stars:totalStars(),xp:meta.xp,rank:rankFor(meta.xp).name};
+    fresh.push(n);
+  }
+  if(fresh.length) saveMeta();
+  return fresh;
+}
+function rrect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+function starPath(g,cx,cy,R,r){ g.beginPath(); for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rad=i%2?r:R; const x=cx+Math.cos(a)*rad, y=cy+Math.sin(a)*rad; i?g.lineTo(x,y):g.moveTo(x,y);} g.closePath(); }
+/* Original logo: speech bubble with "Aa" + star inside a badge. Drawn from scratch, no third-party artwork or fonts. */
+function drawLogo(g,cx,cy,r){
+  g.save();
+  let gr=g.createLinearGradient(cx-r,cy-r,cx+r,cy+r); gr.addColorStop(0,'#e8883f'); gr.addColorStop(1,'#7a2f10');
+  g.beginPath(); g.arc(cx,cy,r,0,Math.PI*2); g.fillStyle=gr; g.fill();
+  g.lineWidth=r*0.07; g.strokeStyle='#f6d98b'; g.beginPath(); g.arc(cx,cy,r*0.93,0,Math.PI*2); g.stroke();
+  g.lineWidth=r*0.025; g.strokeStyle='rgba(255,255,255,.55)'; g.beginPath(); g.arc(cx,cy,r*0.82,0,Math.PI*2); g.stroke();
+  const bw=r*1.12,bh=r*0.80,bx=cx-bw/2,by=cy-bh/2-r*0.08;
+  g.fillStyle='#fff8ea'; rrect(g,bx,by,bw,bh,r*0.22); g.fill();
+  g.beginPath(); g.moveTo(cx-bw*0.30,by+bh-2); g.lineTo(cx-bw*0.42,by+bh+r*0.26); g.lineTo(cx-bw*0.08,by+bh-2); g.closePath(); g.fill();
+  g.fillStyle='#6b2a0e'; g.textAlign='center'; g.textBaseline='middle'; g.font='bold '+Math.round(r*0.58)+'px Georgia, serif';
+  g.fillText('Aa',cx-r*0.04,by+bh/2+r*0.03);
+  g.fillStyle='#f2b632'; starPath(g,bx+bw-r*0.02,by+r*0.02,r*0.26,r*0.11); g.fill();
+  g.lineWidth=r*0.02; g.strokeStyle='#fff8ea'; g.stroke();
+  g.fillStyle='#f6d98b'; for(let i=-1;i<=1;i++){ g.beginPath(); g.arc(cx+i*r*0.17,cy+r*0.62,r*0.045,0,Math.PI*2); g.fill(); }
+  g.restore();
+}
+function wrapText(g,text,x,y,maxW,lh){ const w=text.split(' '); let line=''; w.forEach(t=>{const tt=line?line+' '+t:t; if(g.measureText(tt).width>maxW&&line){g.fillText(line,x,y); y+=lh; line=t;} else line=tt;}); g.fillText(line,x,y); return y; }
+function makeCert(rec){
+  try{
+    const W=1600,H=1130; const c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext&&c.getContext('2d'); if(!g) return null;
+    g.fillStyle='#fffaf0'; g.fillRect(0,0,W,H);
+    // soft watermark circles
+    g.globalAlpha=.05; g.fillStyle='#c9622b'; for(let i=0;i<6;i++){ g.beginPath(); g.arc(W/2,H/2+40,180+i*70,0,Math.PI*2); g.lineWidth=3; g.strokeStyle='#c9622b'; g.stroke(); } g.globalAlpha=1;
+    // borders
+    g.lineWidth=18; g.strokeStyle='#7a2f10'; g.strokeRect(30,30,W-60,H-60);
+    g.lineWidth=5; g.strokeStyle='#d9a441'; g.strokeRect(62,62,W-124,H-124);
+    g.lineWidth=2; g.strokeStyle='#c9622b'; g.strokeRect(78,78,W-156,H-156);
+    // corner ornaments
+    [[78,78,1,1],[W-78,78,-1,1],[78,H-78,1,-1],[W-78,H-78,-1,-1]].forEach(([x,y,sx,sy])=>{
+      g.fillStyle='#d9a441'; starPath(g,x+sx*34,y+sy*34,18,7); g.fill();
+      g.fillStyle='#7a2f10'; g.beginPath(); g.arc(x+sx*70,y+sy*34,5,0,Math.PI*2); g.fill(); g.beginPath(); g.arc(x+sx*34,y+sy*70,5,0,Math.PI*2); g.fill();
+    });
+    g.textAlign='center'; g.textBaseline='alphabetic';
+    drawLogo(g,W/2,190,92);
+    g.fillStyle='#7a2f10'; g.font='bold 30px Arial'; g.fillText('ROHIT SIR ENGLISH QUEST',W/2,322);
+    g.fillStyle='#7a2f10'; g.font='bold 104px Georgia, "Times New Roman", serif'; g.fillText('CERTIFICATE',W/2,435);
+    g.fillStyle='#c9622b'; g.font='34px Georgia, serif'; g.fillText('O F   A C H I E V E M E N T',W/2,490);
+    g.strokeStyle='#d9a441'; g.lineWidth=3; g.beginPath(); g.moveTo(W/2-260,516); g.lineTo(W/2+260,516); g.stroke();
+    g.fillStyle='#555'; g.font='italic 28px Georgia, serif'; g.fillText('This is proudly presented to',W/2,572);
+    // name, shrink to fit
+    let nm=rec.name, fs=96; g.fillStyle='#1d1812';
+    do{ g.font='italic bold '+fs+'px Georgia, "Times New Roman", serif'; fs-=4; }while(g.measureText(nm).width>1100&&fs>36);
+    g.fillText(nm,W/2,672);
+    g.strokeStyle='#7a2f10'; g.lineWidth=2; g.beginPath(); g.moveTo(W/2-420,700); g.lineTo(W/2+420,700); g.stroke();
+    g.fillStyle='#333'; g.font='28px Georgia, serif';
+    wrapText(g,'for successfully completing '+rec.levels+' levels of the Rohit Sir English Quest and showing dedication, consistency and real progress in learning English.',W/2,752,1020,42);
+    // stats
+    const stats=[['LEVELS',String(rec.levels)],['STARS',String(rec.stars)],['XP',String(rec.xp)],['RANK',rec.rank]];
+    stats.forEach((a,i)=>{ const x=W/2-420+i*280; g.fillStyle='#7a2f10'; g.font='bold 40px Arial'; g.fillText(a[1],x,872); g.fillStyle='#8a7a68'; g.font='bold 18px Arial'; g.fillText(a[0],x,898); });
+    // date
+    const dt=new Date(rec.date+'T00:00:00'); const ds=isNaN(dt)?rec.date:dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+    g.fillStyle='#222'; g.font='bold 28px Georgia, serif'; g.fillText(ds,300,968);
+    g.strokeStyle='#7a2f10'; g.lineWidth=2; g.beginPath(); g.moveTo(170,980); g.lineTo(430,980); g.stroke();
+    g.fillStyle='#777'; g.font='18px Arial'; g.fillText('DATE OF ISSUE',300,1008);
+    // signature
+    g.fillStyle='#7a2f10'; g.font='italic 62px "Brush Script MT","Segoe Script","Lucida Handwriting",cursive'; g.fillText('Rohit Sir',W-300,968);
+    g.beginPath(); g.moveTo(W-430,980); g.lineTo(W-170,980); g.stroke();
+    g.fillStyle='#777'; g.font='18px Arial'; g.fillText('FOUNDER & CREATOR',W-300,1008);
+    // seal
+    const sx=W/2, sy=950; let sg=g.createRadialGradient(sx-14,sy-14,8,sx,sy,70); sg.addColorStop(0,'#f6d98b'); sg.addColorStop(1,'#b9791c');
+    g.fillStyle=sg; g.beginPath(); for(let i=0;i<32;i++){ const a=i*Math.PI/16, rad=i%2?66:76; i?g.lineTo(sx+Math.cos(a)*rad,sy+Math.sin(a)*rad):g.moveTo(sx+Math.cos(a)*rad,sy+Math.sin(a)*rad);} g.closePath(); g.fill();
+    g.lineWidth=3; g.strokeStyle='#7a2f10'; g.beginPath(); g.arc(sx,sy,54,0,Math.PI*2); g.stroke();
+    g.fillStyle='#7a2f10'; starPath(g,sx,sy-8,26,11); g.fill();
+    g.font='bold 15px Arial'; g.fillText('OFFICIAL',sx,sy+32); g.font='bold 13px Arial'; g.fillText('No. '+(rec.levels/CERT_EVERY),sx,sy+47);
+    g.fillStyle='#8a7a68'; g.font='17px Arial'; g.fillText('Certificate ID: '+rec.id+'   ·   rohitwebcraft.github.io/Rohit-Sir-English-Quest',W/2,1076);
+    return c.toDataURL('image/png');
+  }catch(e){return null;}
+}
+function certShareText(rec){ return 'I earned my Certificate No. '+(rec.levels/CERT_EVERY)+' ('+rec.levels+' levels completed) in Rohit Sir English Quest! Try it: '+(window.location?window.location.href:''); }
+async function shareCert(url,rec){
+  try{
+    const blob=await (await fetch(url)).blob(); const f=new File([blob],'certificate-'+rec.levels+'-levels.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],text:certShareText(rec)}); return; }
+  }catch(e){ if(e&&e.name==='AbortError') return; }
+  window.open('https://wa.me/?text='+encodeURIComponent(certShareText(rec)),'_blank');
+}
+function certButtons(n,url){
+  const rec=meta.certs[n]; const b=[];
+  if(url){ b.push({label:'🎓 Download certificate',cls:'primary',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'});
+           b.push({label:'📤 Share certificate',fn:()=>shareCert(url,rec)}); }
+  return b;
+}
+function showCerts(){
+  checkCerts(); const ns=Object.keys(meta.certs).map(Number).sort((a,b)=>b-a);
+  const pc=passedCount(), nextAt=(Math.floor(pc/CERT_EVERY)+1)*CERT_EVERY;
+  let extra='<div class="small" style="margin-bottom:8px">Next certificate at '+nextAt+' passed levels ('+pc+' / '+nextAt+')</div>';
+  const buttons=[];
+  if(!ns.length) extra+='<div class="small">Abhi tak koi certificate nahi. Har 10 levels (kam se kam 1 ⭐) par ek Official Certificate milega.</div>';
+  ns.forEach(n=>{ const rec=meta.certs[n]; const url=makeCert(rec);
+    if(url){ extra+='<div class="small"><b>'+rec.levels+' levels</b> · '+esc(rec.date)+'</div><img class="certimg" alt="Certificate" src="'+url+'">';
+      buttons.push({label:'⬇ '+rec.levels+' levels certificate',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'}); } });
+  buttons.push({label:'Back to Levels',cls:'primary',fn:goToMap});
+  showResult({emoji:'🎓',score:ns.length+' certificate'+(ns.length===1?'':'s'),msg:'Rohit Sir English Quest',extra,buttons});
+}
+
 function finishSession(){
   const total=S.items.length, score=S.score, mode=S.mode;
   if(mode==='level'){
@@ -4959,14 +5079,17 @@ function finishSession(){
     const info={title:l.title,score,total,stars}; const url=makeCard(info);
     const gain='<div class="gain">+'+S.xp+' XP'+(bonus?' (incl. '+bonus+' bonus)':'')+'</div>';
     const nxt=LEVELS[l._idx+1]; const speakable=uniq(l.questions.filter(eligibleSentence).map(q=>q.opts[q.a])).length>=2;
-    const buttons=[];
+    const buttons=[]; const newC=checkCerts(); let certExtra='', certBtns=[];
+    if(newC.length){ const n=newC[newC.length-1]; const cu=makeCert(meta.certs[n]);
+      if(cu){ certExtra='<div class="certbanner">🎓 Congratulations! Certificate unlocked — '+meta.certs[n].levels+' levels completed</div><img class="certimg" alt="Certificate" src="'+cu+'">'; certBtns=certButtons(n,cu); } }
     if(nxt) buttons.push({label:'Next level ▶',cls:'primary',fn:()=>startLevel(nxt.id)});
     if(speakable) buttons.push({label:'🎤 Speaking round',fn:()=>startSpeak(l.id)});
     buttons.push({label:'🔁 Retry',fn:()=>startLevel(l.id)});
     if(url){ buttons.push({label:'💬 Share on WhatsApp',href:'https://wa.me/?text='+encodeURIComponent(shareText(info))});
              buttons.push({label:'⬇ Save card',href:url,download:'my-score-card.png'}); }
+    certBtns.slice().reverse().forEach(b=>buttons.unshift(b));
     buttons.push({label:'Back to Levels',fn:goToMap});
-    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:gain+cardHtml(url),buttons});
+    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:certExtra+gain+cardHtml(url),buttons});
   } else if(mode==='boss'){
     const pass=score/total>=0.7; let extra='<div class="gain">+'+S.xp+' XP</div>';
     if(pass&&!meta.bosses[S.section]){ meta.bosses[S.section]=true; addXP(50); extra='<div class="gain">+'+S.xp+' XP · Boss badge 🏅</div>'; saveMeta(); }
@@ -5047,14 +5170,14 @@ $('next-btn').onclick=()=>{ if($('next-btn').dataset.mode==='check') checkBuild(
 $('quiz-back').onclick=goToMap; $('speak-back').onclick=goToMap;
 $('speak-listen').onclick=()=>{ if(SP) speak(SP.list[SP.i],0.9); };
 $('speak-mic').onclick=onMic; $('speak-next').onclick=nextSpeak;
-$('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
+$('btn-certs').onclick=showCerts; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
 $('search').oninput=renderSections;
 ['sound','voice','hindi'].forEach(k=>{ $('tg-'+k).onclick=()=>{ meta.settings[k]=!meta.settings[k]; saveMeta(); renderToggles(); }; });
 let resetArmed=false, resetTimer=null;
 $('btn-reset').onclick=()=>{
   if(!resetArmed){ resetArmed=true; $('btn-reset').textContent='Tap again to confirm reset'; clearTimeout(resetTimer);
     resetTimer=setTimeout(()=>{resetArmed=false; $('btn-reset').textContent='Reset all progress';},4000); return; }
-  progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:meta.settings}; saveProgress(); saveMeta();
+  progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},settings:meta.settings}; saveProgress(); saveMeta();
   resetArmed=false; $('btn-reset').textContent='Reset all progress'; renderMap();
 };
 function submitName(){
