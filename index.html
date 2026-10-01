@@ -166,10 +166,23 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
 <div id="app">
   <div id="phrase-toast"></div>
 
-  <!-- MAP -->
-  <div id="screen-map">
+  <!-- NAME GATE -->
+  <div id="screen-name" class="hidden center">
     <h1>Rohit Sir English Quest</h1>
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
+    <div class="card">
+      <div class="q-text-en" style="margin-bottom:14px;">👋 Apna naam likho</div>
+      <input class="search" id="name-input" type="text" placeholder="Your full name" autocomplete="off" style="margin-bottom:14px;">
+      <button class="next-btn" id="name-start">Start Playing ▶</button>
+      <div class="small" style="margin-top:10px;">Yeh naam aapke teacher ko progress dikhane ke liye use hota hai.</div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div id="screen-map" class="hidden">
+    <h1>Rohit Sir English Quest</h1>
+    <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
+    <div class="small" id="whoami" style="margin-bottom:10px; cursor:pointer;"></div>
 
     <div class="stats">
       <div class="stat"><b id="st-streak">0</b><span>🔥 day streak</span></div>
@@ -4580,6 +4593,20 @@ meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.ope
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
+/* ================= TEACHER DASHBOARD SYNC ================= */
+const K_NAME='fea_quest_name';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwRWpCXUUqOx7IaDJ2au84upplylXnDXcOIFukupWg6nWD8PsWtBMBBLvgBfAP1t0qg/exec';
+let studentName=load(K_NAME,'');
+function syncToSheet(){
+  if(!studentName||!SHEET_URL) return;
+  try{
+    const r=rankFor(meta.xp);
+    const payload={name:studentName, levelsDone:Object.keys(progress).length, totalLevels:LEVELS.length,
+      stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak()};
+    fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  }catch(e){}
+}
+
 /* ================= LEVEL META ================= */
 const SECTION_ORDER=['A','B','C','D','E','F'];
 const SECTION_INFO={
@@ -4664,7 +4691,7 @@ function celebrate(isCorrect){
 
 /* ================= NAVIGATION ================= */
 function show(name){
-  ['map','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
+  ['name','map','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
   try{window.scrollTo(0,0);}catch(e){}
   if(name==='map') renderMap();
 }
@@ -4685,6 +4712,7 @@ function renderToggles(){
   set('tg-sound',s.sound,'🔊 Sound'); set('tg-voice',s.voice,'🗣 Voice'); set('tg-hindi',s.hindi,'🇮🇳 Hindi hint');
 }
 function renderMap(){
+  $('whoami').textContent='👤 '+(studentName||'')+'  ✏️';
   $('st-streak').textContent=shownStreak(); $('st-stars').textContent=totalStars(); $('st-xp').textContent=meta.xp;
   const r=rankFor(meta.xp), nr=nextRank(meta.xp);
   $('st-rank').textContent=r.emoji; $('st-rank-l').textContent=r.name;
@@ -4951,6 +4979,7 @@ function finishSession(){
     showResult({emoji:score/total>=0.7?'🎉':'💪',score:score+' / '+total,msg,extra:'<div class="gain">+'+S.xp+' XP</div>',
       buttons:[{label:mode==='mistakes'?'📓 Practise again':'🔁 Another round',cls:'primary',fn:mode==='mistakes'?startMistakes:startRevision},{label:'Back to Levels',fn:goToMap}]});
   }
+  syncToSheet();
 }
 
 /* ================= SPEAKING ROUND ================= */
@@ -5009,6 +5038,7 @@ function nextSpeak(){
     const l=LEVEL_BY_ID[SP.lid];
     showResult({emoji:SP.pass>=Math.ceil(SP.list.length/2)?'🎤':'💪',score:SP.pass+' / '+SP.list.length,msg:'Speaking round complete!',extra:'<div class="gain">+'+SP.xp+' XP</div>',
       buttons:[{label:'Play level again',cls:'primary',fn:()=>startLevel(l.id)},{label:'Back to Levels',fn:goToMap}]});
+    syncToSheet();
   }
 }
 
@@ -5027,7 +5057,18 @@ $('btn-reset').onclick=()=>{
   progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:meta.settings}; saveProgress(); saveMeta();
   resetArmed=false; $('btn-reset').textContent='Reset all progress'; renderMap();
 };
-renderMap();
+function submitName(){
+  const v=$('name-input').value.trim();
+  if(!v){ $('name-input').focus(); return; }
+  studentName=v; save(K_NAME,studentName); show('map'); syncToSheet();
+}
+$('name-start').onclick=submitName;
+$('name-input').onkeydown=e=>{ if(e.key==='Enter') submitName(); };
+$('whoami').onclick=()=>{
+  const v=window.prompt('Apna naam edit karo:',studentName);
+  if(v&&v.trim()){ studentName=v.trim(); save(K_NAME,studentName); renderMap(); syncToSheet(); }
+};
+if(studentName){ show('map'); } else { show('name'); }
 </script>
 </body>
 </html>
