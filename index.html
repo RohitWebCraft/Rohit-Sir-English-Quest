@@ -213,7 +213,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div style="text-align: center; margin: 22px auto; max-width: 550px; padding: 25px; border: 2px dashed #28a745; border-radius: 12px; background-color: #f4fff7; font-family: sans-serif; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
         <span style="background-color: #ff3333; color: white; padding: 4px 10px; font-size: 12px; font-weight: bold; border-radius: 4px;">🔥 Most Popular Notes</span>
         <h3 style="color: #155724; margin-top: 15px; font-size: 22px;">📝 Rohit Sir's 100+ Essential English Grammar Rules PDF</h3>
-        <p style="color: #555; font-size: 14px;">प्रतियोगी परीक्षाओं में कॉमन एरर (Common Errors) के सवालों को 100% सही करने के लिए रोहित सर के शार्ट नोट्स।</p>
+        <p style="color: #555; font-size: 14px;">प्रतियोगी परीक्षाओं में कॉमन एरर (Common Errors) के सवालों को 100% सही करने के लिए रोहित सर के हस्तलिखित शार्ट नोट्स।</p>
         <div style="font-size: 26px; color: #28a745; font-weight: bold; margin: 15px 0;">मात्र ₹29</div>
         <a href="https://forms.gle/7DRRAAwwZ8Wm3Wie6" target="_blank" rel="noopener" style="display: block; background-color: #28a745; color: white; padding: 14px 20px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 16px; transition: 0.3s; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);">
             🚀 ₹29 का भुगतान करें और PDF पाएं
@@ -4972,7 +4972,7 @@ function shareText(o){ return 'I scored '+o.score+'/'+o.total+' '+'⭐'.repeat(o
 /* ================= CERTIFICATES (every 10 passed levels) ================= */
 const CERT_EVERY=10;
 const GAME_URL='https://rohitwebcraft.github.io/Rohit-Sir-English-Quest/';
-function verifyUrl(rec){ return SHEET_URL+'?id='+encodeURIComponent(rec.id); }
+function verifyUrl(rec){ return GAME_URL+'?v='+encodeURIComponent(rec.id); }
 function certViewUrl(rec){ return GAME_URL+'?cert='+encodeURIComponent(rec.id)+'&n='+encodeURIComponent(rec.name)+'&l='+rec.levels+'&d='+rec.date+'&s='+rec.stars+'&x='+rec.xp+'&r='+encodeURIComponent(rec.rank); }
 function drawQR(g,text,x,y,size){
   try{
@@ -5222,9 +5222,24 @@ $('whoami').onclick=()=>{
   const v=window.prompt('Apna naam edit karo:',studentName);
   if(v&&v.trim()){ studentName=v.trim(); save(K_NAME,studentName); renderMap(); syncToSheet(); }
 };
+async function openVerified(id){
+  const back=[{label:'Open the game',cls:'primary',href:GAME_URL}];
+  showResult({emoji:'🔎',score:'Checking…',msg:'Certificate ID: '+id,extra:'',buttons:[]});
+  try{
+    const r=await fetch(SHEET_URL+'?format=json&id='+encodeURIComponent(id)); const j=await r.json();
+    if(!j||!j.ok){ showResult({emoji:'❌',score:'Not found',msg:'Yeh certificate hamare record me nahi mila.',extra:'<div class="small">ID: '+esc(id)+'</div>',buttons:back}); return; }
+    const rec={id:j.id,name:j.name,levels:Number(j.levels)||CERT_EVERY,date:String(j.date),stars:Number(j.stars)||0,xp:Number(j.xp)||0,rank:j.rank||'Beginner'};
+    const url=makeCert(rec);
+    showResult({emoji:'✅',score:'Verified',msg:'Certificate for '+rec.name,
+      extra:'<div class="certbanner">✅ Yeh certificate asli hai — '+rec.levels+' levels · '+esc(rec.date)+'</div>'+(url?'<img class="certimg" alt="Certificate" src="'+url+'">':''),
+      buttons:(url?[{label:'🎓 Download certificate',cls:'primary',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'},{label:'📤 Share certificate',fn:()=>shareCert(url,rec)}]:[]).concat([{label:'Open the game',href:GAME_URL}])});
+  }catch(e){ showResult({emoji:'📡',score:'Check nahi ho paya',msg:'Internet check karke dobara try karo.',extra:'',buttons:[{label:'Retry',cls:'primary',fn:()=>window.location.reload()}].concat(back)}); }
+}
 function openSharedCert(){
   try{
-    const q=new URLSearchParams(window.location.search); const id=q.get('cert'); if(!id) return false;
+    const q=new URLSearchParams(window.location.search);
+    const v=q.get('v'); if(v){ openVerified(v); return true; }
+    const id=q.get('cert'); if(!id) return false;
     const rec={id:id,name:q.get('n')||'Student',levels:parseInt(q.get('l'),10)||CERT_EVERY,date:q.get('d')||dayStr(new Date()),stars:parseInt(q.get('s'),10)||0,xp:parseInt(q.get('x'),10)||0,rank:q.get('r')||'Beginner'};
     const url=makeCert(rec); if(!url) return false;
     showResult({emoji:'🎓',score:rec.levels+' levels',msg:'Certificate for '+rec.name,extra:'<div class="small">Certificate ID: '+esc(rec.id)+'</div><img class="certimg" alt="Certificate" src="'+url+'">',
