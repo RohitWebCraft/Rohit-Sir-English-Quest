@@ -149,6 +149,14 @@ h1{font-size:1.5rem; margin:4px 0 2px; letter-spacing:.3px;}
 a.btn{text-decoration:none; text-align:center; display:block;}
 .speak-sentence{font-size:1.4rem; font-weight:700; line-height:1.5; margin:14px 0 18px;}
 .heard{font-size:.9rem; color:var(--sub); margin-top:8px;}
+.lcard{display:flex; gap:10px; align-items:center; width:100%; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; color:var(--ink); cursor:pointer; font-size:.95rem;}
+.lic{font-size:1.5rem; flex:none;}
+.lbox{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px;}
+.lbox h3{margin:0 0 6px; font-size:.95rem; color:var(--accent);}
+.lbox ul{margin:0; padding-left:18px;} .lbox li{margin:5px 0; line-height:1.5;}
+.lmis{margin:8px 0; padding-bottom:6px; border-bottom:1px dashed var(--line);} .lmis:last-child{border-bottom:none;}
+.lx{color:var(--badink); background:var(--badbg); border-radius:8px; padding:4px 8px; margin-bottom:4px;}
+.lok{color:var(--goodink); background:var(--goodbg); border-radius:8px; padding:4px 8px; margin-bottom:4px;}
 .certimg{width:100%; max-width:640px; border-radius:10px; border:1px solid var(--line); margin:10px auto; display:block;}
 .certbanner{background:linear-gradient(135deg,#c9622b,#7a2f10); color:#fff; padding:10px 14px; border-radius:12px; font-weight:700; margin:8px 0;}
 .gain{display:inline-block; background:var(--goodbg); color:var(--goodink); padding:4px 12px; border-radius:20px; font-weight:700; font-size:.85rem; margin-bottom:8px;}
@@ -204,6 +212,9 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div id="continue-wrap"></div>
 
     <div class="actions">
+      <button class="btn primary" id="btn-lessons">📖 Grammar Lessons (27 topics)</button>
+    </div>
+    <div class="actions">
       <button class="btn" id="btn-mistakes">📓 Mistakes</button>
       <button class="btn" id="btn-revision">🔁 Quick Revision</button>
       <button class="btn" id="btn-certs">🎓 Certificates</button>
@@ -227,8 +238,23 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" autocomplete="off">
     <div id="sections"></div>
 
-    <footer>Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels</footer>
+    <footer>Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</footer>
     <div class="center"><button class="resetbtn" id="btn-reset">Reset all progress</button></div>
+  </div>
+
+  <!-- GRAMMAR LESSONS -->
+  <div id="screen-lessons" class="hidden">
+    <div class="quiz-header">
+      <button class="back-btn" id="lesson-back">← Back</button>
+      <span>📖 Grammar Lessons</span>
+    </div>
+    <div id="lesson-list-wrap">
+      <div class="small" style="margin-bottom:4px">Pehle lesson padho, phir uska practice quiz pass karo (kam se kam 1 ⭐). 10, 20 aur 27 lessons complete karne par certificate milega.</div>
+      <div class="small" id="lesson-progress" style="margin-bottom:8px; font-weight:700"></div>
+      <input class="search" id="lesson-search" type="search" placeholder="🔎 Topic dhoondo: tense, articles, passive…" autocomplete="off">
+      <div id="lesson-list"></div>
+    </div>
+    <div id="lesson-view" class="hidden"><div id="lesson-body"></div></div>
   </div>
 
   <!-- QUIZ -->
@@ -4585,6 +4611,331 @@ const LEVELS = [
       opts:["Although the project was challenging, our team completed it successfully on time.","Although project was challenging, but our team completes it successfully.","Although the project is challenging, our team completed it on time, under normal circumstances.","Although project was challenging, our team was completed it on time."], a:0}
   ]
 },
+{
+  id:"p1", title:"Grammar Plus 1 · Nouns: Singular & Plural", topic:"Regular and irregular plural nouns",
+  questions:[
+    {diff:"easy",
+      qEn:"What is the correct plural of 'child'?",
+      qHi:"'Child' ka sahi plural kya hai?",
+      opts:["children", "childs", "childrens", "childes"], a:0},
+    {diff:"easy",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["The boxes are on the table.", "The boxs are on the table.", "The boxes is on the table.", "The boxies are on the table."], a:0},
+    {diff:"medium",
+      qEn:"What is the correct plural of 'city'?",
+      qHi:"'City' ka sahi plural kya hai?",
+      opts:["cities", "citys", "cityes", "citis"], a:0},
+    {diff:"medium",
+      qEn:"Which word has the same form in singular and plural?",
+      qHi:"Kaun sa shabd singular aur plural dono me same rehta hai?",
+      opts:["sheep", "goat", "cow", "hen"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["Many women were waiting outside the office.", "Many womans were waiting outside the office.", "Many womens were waiting outside the office.", "Many woman were waiting outside the office."], a:0}
+  ]
+},
+{
+  id:"p2", title:"Grammar Plus 2 · Countable & Uncountable Nouns", topic:"Much, many, some, any, a few, a little",
+  questions:[
+    {diff:"easy",
+      qEn:"Which word is uncountable?",
+      qHi:"Kaun sa shabd uncountable hai?",
+      opts:["water", "bottle", "glass", "cup"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'There are too ___ students in the class.'",
+      qHi:"Sahi word se vakya poora kijiye.",
+      opts:["many", "much", "little", "an"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'I don't have ___ money.'",
+      qHi:"Sahi word chuniye.",
+      opts:["much", "many", "a few", "several"], a:0},
+    {diff:"medium",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["She gave me some advice.", "She gave me an advice.", "She gave me some advices.", "She gave me many advice."], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["We have little time, so please hurry up.", "We have few time, so please hurry up.", "We have a few time, so please hurry up.", "We have many time, so please hurry up."], a:0}
+  ]
+},
+{
+  id:"p3", title:"Grammar Plus 3 · Relative Pronouns: Who, Which, That", topic:"Joining sentences with who, whom, whose, which, where",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the sentence: 'The girl ___ sings well is my sister.'",
+      qHi:"Sahi relative pronoun chuniye.",
+      opts:["who", "which", "where", "what"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'This is the book ___ I bought yesterday.'",
+      qHi:"Sahi relative pronoun chuniye.",
+      opts:["which", "who", "whose", "where"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'I know a man ___ car is red.'",
+      qHi:"Sahi word chuniye (ownership dikhane ke liye).",
+      opts:["whose", "who", "whom", "which"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'That is the house ___ I was born.'",
+      qHi:"Jagah dikhane wala sahi word chuniye.",
+      opts:["where", "which", "who", "whose"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["The teacher who taught me is retired.", "The teacher which taught me is retired.", "The teacher whose taught me is retired.", "The teacher whom taught me is retired."], a:0}
+  ]
+},
+{
+  id:"p4", title:"Grammar Plus 4 · Conditionals: Zero & First", topic:"If + present, will + verb (real situations)",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the sentence: 'If you heat ice, it ___.'",
+      qHi:"Sahi verb form chuniye.",
+      opts:["melts", "melted", "melting", "will melting"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'If it rains tomorrow, we ___ at home.'",
+      qHi:"Sahi verb form chuniye.",
+      opts:["will stay", "stayed", "had stayed", "staying"], a:0},
+    {diff:"medium",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["If I see him, I will tell him.", "If I will see him, I will tell him.", "If I saw him, I will tell him.", "If I see him, I would told him."], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'Water boils if you ___ it to 100°C.'",
+      qHi:"Sahi verb chuniye.",
+      opts:["heat", "will heat", "heated", "would heat"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is a correct first conditional?",
+      qHi:"Sahi first conditional vakya chuniye.",
+      opts:["If you study hard, you will pass the exam.", "If you will study hard, you pass the exam.", "If you studied hard, you will pass the exam.", "If you study hard, you would passed the exam."], a:0}
+  ]
+},
+{
+  id:"p5", title:"Grammar Plus 5 · Conditionals: Second & Third", topic:"Imaginary and past unreal situations (if + past / had + V3)",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the sentence: 'If I ___ a bird, I would fly.'",
+      qHi:"Sahi form chuniye.",
+      opts:["were", "am", "will be", "have been"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'If I had money, I ___ buy a car.'",
+      qHi:"Sahi word chuniye.",
+      opts:["would", "will", "did", "had"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'If she had studied, she ___ passed.'",
+      qHi:"Third conditional ka sahi form chuniye.",
+      opts:["would have", "will have", "would", "had"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'If I ___ you, I would apologise.'",
+      qHi:"Sahi form chuniye.",
+      opts:["were", "am", "will be", "had been"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["If we had left early, we would have caught the train.", "If we had left early, we would catch the train.", "If we left early, we would have caught the train.", "If we would have left early, we would have caught the train."], a:0}
+  ]
+},
+{
+  id:"p6", title:"Grammar Plus 6 · Passive Voice", topic:"Is/was/been + V3 (object becomes the subject)",
+  questions:[
+    {diff:"easy",
+      qEn:"Which is the passive form of 'She writes a letter.'?",
+      qHi:"'She writes a letter.' ka passive voice kaun sa hai?",
+      opts:["A letter is written by her.", "A letter writes by her.", "A letter is writing by her.", "A letter was write by her."], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'The window ___ by the boy.'",
+      qHi:"Sahi passive form chuniye.",
+      opts:["was broken", "broke", "was break", "has broke"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'English ___ all over the world.'",
+      qHi:"Sahi passive form chuniye.",
+      opts:["is spoken", "speaks", "is speaking", "spoke"], a:0},
+    {diff:"medium",
+      qEn:"Which is the passive form of 'They are building a bridge.'?",
+      qHi:"Sahi passive voice chuniye.",
+      opts:["A bridge is being built by them.", "A bridge is built by them.", "A bridge was being build by them.", "A bridge has built by them."], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is in the passive voice?",
+      qHi:"Passive voice wala vakya chuniye.",
+      opts:["The cake was eaten by the children.", "The children ate the cake.", "The children are eating the cake.", "The children will eat the cake."], a:0}
+  ]
+},
+{
+  id:"p7", title:"Grammar Plus 7 · Direct & Indirect Speech", topic:"Reporting what someone said (tense and time changes)",
+  questions:[
+    {diff:"easy",
+      qEn:"He said, \"I am happy.\" → He said that he ___ happy.",
+      qHi:"Indirect speech me sahi verb chuniye.",
+      opts:["was", "is", "am", "were"], a:0},
+    {diff:"easy",
+      qEn:"She said, \"I will come.\" → She said that she ___ come.",
+      qHi:"Indirect speech me sahi word chuniye.",
+      opts:["would", "will", "shall", "can"], a:0},
+    {diff:"medium",
+      qEn:"He said, \"I like mangoes.\" → He said that he ___ mangoes.",
+      qHi:"Indirect speech me sahi verb chuniye.",
+      opts:["liked", "likes", "like", "has liked"], a:0},
+    {diff:"medium",
+      qEn:"In indirect speech, 'tomorrow' usually changes to:",
+      qHi:"Indirect speech me 'tomorrow' kis me badalta hai?",
+      opts:["the next day", "yesterday", "today", "the previous day"], a:0},
+    {diff:"hard",
+      qEn:"Choose the correct indirect speech: She said, \"I am reading a book.\"",
+      qHi:"Sahi indirect speech chuniye.",
+      opts:["She said that she was reading a book.", "She said that she is reading a book.", "She said that I was reading a book.", "She said that she has been read a book."], a:0}
+  ]
+},
+{
+  id:"p8", title:"Grammar Plus 8 · Question Tags", topic:"Short questions at the end: isn't it? don't you?",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the question tag: 'You are a student, ___?'",
+      qHi:"Sahi question tag chuniye.",
+      opts:["aren't you", "are you", "don't you", "isn't you"], a:0},
+    {diff:"easy",
+      qEn:"Complete the question tag: 'She likes tea, ___?'",
+      qHi:"Sahi question tag chuniye.",
+      opts:["doesn't she", "does she", "isn't she", "don't she"], a:0},
+    {diff:"medium",
+      qEn:"Complete the question tag: 'They didn't come, ___?'",
+      qHi:"Sahi question tag chuniye.",
+      opts:["did they", "didn't they", "do they", "don't they"], a:0},
+    {diff:"medium",
+      qEn:"Complete the question tag: 'Let's go, ___?'",
+      qHi:"Sahi question tag chuniye.",
+      opts:["shall we", "will we", "don't we", "let us"], a:0},
+    {diff:"hard",
+      qEn:"Complete the question tag: 'I am late, ___?'",
+      qHi:"Sahi question tag chuniye.",
+      opts:["aren't I", "amn't I", "isn't I", "don't I"], a:0}
+  ]
+},
+{
+  id:"p9", title:"Grammar Plus 9 · Gerunds & Infinitives", topic:"Verb + -ing or verb + to + verb",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the sentence: 'I enjoy ___ English.'",
+      qHi:"Sahi form chuniye.",
+      opts:["learning", "to learn", "learn", "learned"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'She wants ___ a doctor.'",
+      qHi:"Sahi form chuniye.",
+      opts:["to become", "becoming", "become", "became"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'He avoided ___ the question.'",
+      qHi:"Sahi form chuniye.",
+      opts:["answering", "to answer", "answer", "answered"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'She is good at ___ pictures.'",
+      qHi:"Preposition ke baad sahi form chuniye.",
+      opts:["drawing", "to draw", "draw", "drawn"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["I look forward to meeting you.", "I look forward to meet you.", "I look forward meeting you.", "I look forward for meet you."], a:0}
+  ]
+},
+{
+  id:"p10", title:"Grammar Plus 10 · Common Errors (Exam Special)", topic:"Frequently asked errors in competitive exams",
+  questions:[
+    {diff:"easy",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["He doesn't know the answer.", "He don't know the answer.", "He not know the answer.", "He doesn't knows the answer."], a:0},
+    {diff:"easy",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["I have been living here since 2010.", "I am living here since 2010.", "I have been living here from 2010.", "I live here since 2010."], a:0},
+    {diff:"medium",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["Each of the boys has a bag.", "Each of the boys have a bag.", "Each of the boy has a bag.", "Each of the boys are having a bag."], a:0},
+    {diff:"medium",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["She is senior to me.", "She is senior than me.", "She is more senior than me.", "She is senior from me."], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["Neither he nor I am responsible.", "Neither he nor I are responsible.", "Neither he nor I is responsible.", "Neither he nor me am responsible."], a:0}
+  ]
+},
+{
+  id:"p11", title:"Grammar Plus 11 · Common Phrasal Verbs", topic:"Give up, look after, call off, run out of",
+  questions:[
+    {diff:"easy",
+      qEn:"What does 'give up' mean?",
+      qHi:"'Give up' ka matlab kya hai?",
+      opts:["stop trying", "start again", "win a prize", "wake up"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'Please ___ the light.' (stop it)",
+      qHi:"Sahi phrasal verb chuniye.",
+      opts:["turn off", "turn in", "turn up", "turn into"], a:0},
+    {diff:"medium",
+      qEn:"What does 'look after' mean?",
+      qHi:"'Look after' ka matlab kya hai?",
+      opts:["take care of", "search for", "look at", "wait for"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'The match was ___ because of rain.' (cancelled)",
+      qHi:"Sahi phrasal verb chuniye.",
+      opts:["called off", "called on", "called up", "called in"], a:0},
+    {diff:"hard",
+      qEn:"What does 'run out of' mean?",
+      qHi:"'Run out of' ka matlab kya hai?",
+      opts:["have none left", "run away from", "meet by chance", "start running"], a:0}
+  ]
+},
+{
+  id:"p12", title:"Grammar Plus 12 · Punctuation & Capital Letters", topic:"Full stop, comma, apostrophe, capitalization",
+  questions:[
+    {diff:"easy",
+      qEn:"Which sentence is punctuated correctly?",
+      qHi:"Sahi punctuation wala vakya chuniye.",
+      opts:["What is your name?", "What is your name.", "What is your name!,", "what is your name?"], a:0},
+    {diff:"easy",
+      qEn:"Which sentence has correct capitalization?",
+      qHi:"Sahi capital letters wala vakya chuniye.",
+      opts:["Rohit lives in Indore.", "rohit lives in indore.", "Rohit lives in indore.", "rohit lives in Indore."], a:0},
+    {diff:"medium",
+      qEn:"Which sentence uses commas correctly?",
+      qHi:"Comma ka sahi prayog chuniye.",
+      opts:["I bought apples, bananas, and grapes.", "I bought, apples bananas and grapes.", "I bought apples bananas, and, grapes.", "I, bought apples bananas and grapes."], a:0},
+    {diff:"medium",
+      qEn:"Choose the correct possessive form for ONE girl's book:",
+      qHi:"Ek ladki ki kitab ke liye sahi form chuniye.",
+      opts:["the girl's book", "the girls book", "the girls' book", "the girl book"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["It's raining, so the dog stays inside its kennel.", "Its raining, so the dog stays inside it's kennel.", "It's raining, so the dog stays inside it's kennel.", "Its raining, so the dog stays inside its kennel."], a:0}
+  ]
+},
+{
+  id:"p13", title:"Grammar Plus 13 · Confusing Words", topic:"Their/there, accept/except, affect/effect, less/fewer",
+  questions:[
+    {diff:"easy",
+      qEn:"Complete the sentence: 'I left my bag over ___.'",
+      qHi:"Sahi word chuniye.",
+      opts:["there", "their", "they're", "thier"], a:0},
+    {diff:"easy",
+      qEn:"Complete the sentence: 'Please ___ my apology.'",
+      qHi:"Sahi word chuniye.",
+      opts:["accept", "except", "expect", "excerpt"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'The weather ___ my mood.'",
+      qHi:"Sahi word chuniye.",
+      opts:["affects", "effects", "affect's", "effected"], a:0},
+    {diff:"medium",
+      qEn:"Complete the sentence: 'I have ___ homework than you.'",
+      qHi:"Sahi word chuniye.",
+      opts:["less", "fewer", "few", "many"], a:0},
+    {diff:"hard",
+      qEn:"Which sentence is correct?",
+      qHi:"Sahi vakya chuniye.",
+      opts:["The principal's advice had a positive effect on students.", "The principal's advice had a positive affect on students.", "The principle's advice had a positive effect on students.", "The principal's advise had a positive effect on students."], a:0}
+  ]
+},
 ];
 
 /* ================= FEEDBACK PHRASES ================= */
@@ -4611,7 +4962,7 @@ const K_PROG='fea_quest_progress', K_META='fea_quest_meta';
 let progress=load(K_PROG,{});
 let meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:{}},load(K_META,{}));
 meta.settings=Object.assign({sound:true,voice:true,hindi:true},meta.settings||{});
-meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{};
+meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{};
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
@@ -4625,7 +4976,7 @@ function syncToSheet(){
     const r=rankFor(meta.xp);
     const payload={name:studentName, levelsDone:Object.keys(progress).length, totalLevels:LEVELS.length,
       stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak(), certificates:Object.keys(meta.certs||{}).length,
-      certs:Object.keys(meta.certs||{}).map(k=>{const c=meta.certs[k]; return {id:c.id,name:c.name,levels:c.levels,date:c.date,stars:c.stars,xp:c.xp,rank:c.rank};})};
+      certs:Object.keys(meta.certs||{}).map(k=>{const c=meta.certs[k]; return {id:c.id,name:c.name,levels:c.levels,date:c.date,stars:c.stars,xp:c.xp,rank:c.rank,t:c.t||0};})};
     fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
   }catch(e){}
 }
@@ -4637,7 +4988,7 @@ const SECTION_INFO={
   D:{name:'Day 101 – 150',icon:'📙'}, E:{name:'Day 151 – 207',icon:'📕'}, F:{name:'Grammar Booster (Bonus)',icon:'⚡'}
 };
 function sectionOf(l){
-  if(l.id[0]==='f') return 'A'; if(l.id[0]==='g') return 'F';
+  if(l.id[0]==='f') return 'A'; if(l.id[0]==='g'||l.id[0]==='p') return 'F';
   const n=parseInt(l.id.slice(1),10);
   return n<=50?'B':n<=100?'C':n<=150?'D':'E';
 }
@@ -4714,7 +5065,7 @@ function celebrate(isCorrect){
 
 /* ================= NAVIGATION ================= */
 function show(name){
-  ['name','map','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
+  ['name','map','lessons','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
   try{window.scrollTo(0,0);}catch(e){}
   if(name==='map') renderMap();
 }
@@ -4973,6 +5324,176 @@ function cardHtml(url){ return url?('<img class="scorecard" alt="Score card" src
 function shareText(o){ return 'I scored '+o.score+'/'+o.total+' '+'⭐'.repeat(o.stars)+' on "'+o.title+'" in Rohit Sir English Quest! Rank: '+rankFor(meta.xp).name+'. Try it: '+(window.location?window.location.href:''); }
 
 
+/* ================= GRAMMAR LESSONS (study notes + link to practice level) ================= */
+const LESSONS=[
+{icon:"👉",title:"This, That, These, Those & My, Your",sub:"Demonstratives and possessive adjectives",level:"g1",
+ rule:["This / these = paas ki cheez (this = ek, these = kai).","That / those = door ki cheez (that = ek, those = kai).","My, your, his, her, its, our, their = kiski cheez hai, yeh batate hain. Inke baad hamesha noun aata hai."],
+ ex:["This book is mine. / These books are mine.","That house is big. / Those houses are big.","She is my sister. Their school is near.","Our teacher is kind."],
+ bad:[["These book is new.","This book is new.","book singular hai, to this"],["Those is my pens.","Those are my pens.","plural ke saath are"]],
+ tip:"Paas + ek = this, paas + kai = these, door + ek = that, door + kai = those."},
+{icon:"🧩",title:"Nouns: Singular & Plural",sub:"Plural banane ke rules",level:"p1",
+ rule:["Aam rule: noun ke baad -s lagao. book → books.","s, x, ch, sh, ss par -es: bus → buses, box → boxes, church → churches.","Consonant + y → ies: baby → babies. Vowel + y par sirf -s: boy → boys.","f / fe → ves: leaf → leaves, knife → knives.","Irregular: man → men, woman → women, child → children, foot → feet, tooth → teeth, mouse → mice, person → people.","Same form: sheep, fish, deer."],
+ ex:["one city → two cities","one child → three children","one sheep → many sheep"],
+ bad:[["Childs are playing.","Children are playing.","child ka plural children hai"],["I have two mans.","I have two men.","man ka plural men hai"]],
+ tip:"Irregular plurals ko ratt lo, wahi exam me aate hain."},
+{icon:"🥛",title:"Countable & Uncountable Nouns",sub:"Many, much, a few, a little",level:"p2",
+ rule:["Countable (gin sakte hain): book, pen, student. Inke saath a/an, many, few, number of.","Uncountable (gin nahi sakte): water, milk, rice, advice, information, furniture, news, knowledge. Inke saath much, little, amount of.","Uncountable noun ka plural nahi banta aur verb singular lagta hai.","Some, any, a lot of, enough dono ke saath chalte hain."],
+ ex:["How many books do you have?","How much water do you need?","I have a little time and a few friends.","She gave me some advice."],
+ bad:[["He gave me many informations.","He gave me a lot of information.","information uncountable hai"],["I need an advice.","I need some advice. (a piece of advice)","advice ke saath a/an nahi lagta"]],
+ tip:"Few/many = countable. Little/much = uncountable."},
+{icon:"🅰️",title:"Articles: A, An, The",sub:"Kab a, kab an, kab the aur kab kuch nahi",level:"g3",
+ rule:["A = consonant sound se pehle: a book, a university (yu sound).","An = vowel sound se pehle: an apple, an hour (h silent).","The = jab specific ya pehle se pata ho: the sun, the book on the table. Superlative ke saath bhi: the best. Rivers, oceans aur mountain ranges ke saath: the Ganga, the Himalayas.","Koi article nahi: meals (breakfast), languages (Hindi), games (cricket), general plural nouns, aur zyadatar naam."],
+ ex:["She is an honest girl.","I saw a movie. The movie was great.","He plays cricket.","The sun rises in the east."],
+ bad:[["He is an university student.","He is a university student.","university ki shuruaat yu sound se hoti hai"],["I play the cricket.","I play cricket.","games ke saath the nahi"],["She is a honest girl.","She is an honest girl.","honest me h silent hai"]],
+ tip:"Spelling nahi, sound dekho: an hour, a one-rupee coin."},
+{icon:"🙋",title:"Pronouns",sub:"I, me, my, mine aur baaki",level:"g9",
+ rule:["Subject: I, you, he, she, it, we, they.","Object: me, you, him, her, it, us, them.","Possessive adjective (noun ke saath): my, your, his, her, its, our, their.","Possessive pronoun (akele): mine, yours, his, hers, ours, theirs."],
+ ex:["She gave me a gift.","This is my pen. This pen is mine.","Rohit and I are friends.","The dog wagged its tail."],
+ bad:[["This book is my.","This book is mine.","noun ke bina mine lagta hai"],["Its a nice day.","It's a nice day.","It's = It is"],["Me and Raj went out.","Raj and I went out.","subject ki jagah I aata hai"]],
+ tip:"its = uska (ownership). it's = it is."},
+{icon:"🤝",title:"Subject-Verb Agreement",sub:"Singular subject ke saath singular verb",level:"g27",
+ rule:["Singular subject + s/es wala verb: He plays. Plural subject + base verb: They play.","Each, every, either, neither, one of ke saath singular verb: Each of the boys is.","Do subject 'and' se jude hon to plural: Ram and Shyam are.","Uncountable noun singular hota hai: The news is good. Mathematics is easy.","The number of = singular. A number of = plural.","Either...or / neither...nor me verb paas wale subject ke hisaab se."],
+ ex:["Each student has a book.","Neither of them is here.","A number of students are absent.","The number of students is 40."],
+ bad:[["He don't like tea.","He doesn't like tea.","he/she/it ke saath doesn't"],["Each of the boys are present.","Each of the boys is present.","each ke saath singular"],["Ram and Shyam is friends.","Ram and Shyam are friends.","'and' plural banata hai"]],
+ tip:"Each, every, either, neither: hamesha singular."},
+{icon:"🕘",title:"Simple Present Tense",sub:"Aadat, routine aur facts",level:"g6",
+ rule:["Use: roz ki aadat, routine aur universal facts.","He/she/it ke saath verb me -s/es lagta hai: He plays, She goes.","Negative: do not / does not + base verb. Question: Do / Does + subject + base verb.","Time words: always, usually, every day, never."],
+ ex:["I get up at 6 am.","She does not eat meat.","Does he play cricket?","The sun rises in the east."],
+ bad:[["She don't like tea.","She doesn't like tea.","she ke saath doesn't"],["Does she likes tea?","Does she like tea?","does ke baad base verb"],["The sun rise in the east.","The sun rises in the east.","sun singular hai"]],
+ tip:"Does / doesn't ke baad verb me -s kabhi nahi lagta."},
+{icon:"⏪",title:"Simple Past Tense",sub:"Beete hue kaam",level:"g7",
+ rule:["Use: jo kaam beet chuka ho aur time pata ho (yesterday, last week, in 2020).","Verb ka 2nd form (V2): played, went, saw, ate.","Negative: did not + V1. Question: Did + subject + V1.","Irregular: go-went, see-saw, eat-ate, buy-bought, take-took."],
+ ex:["I visited Delhi last year.","She did not come yesterday.","Did you see him?","They bought a car."],
+ bad:[["Did he went there?","Did he go there?","did ke baad V1 aata hai"],["I didn't saw him.","I didn't see him.","didn't ke baad V1"],["She goed to school.","She went to school.","go ka V2 went hai"]],
+ tip:"Did aa gaya to main verb ko simple (V1) rakho."},
+{icon:"⏩",title:"Simple Future Tense",sub:"Will, shall aur going to",level:"g8",
+ rule:["Will / shall + V1 = future ka kaam, promise, achanak faisla, prediction.","Shall zyadatar I/we ke saath, offer ya suggestion me: Shall I help you?","Be going to = pehle se socha hua plan: I am going to buy a phone.","Negative: will not (won't). Question: Will + subject + V1?"],
+ ex:["I will call you tomorrow.","It will rain today.","Shall we go?","She is going to start a business."],
+ bad:[["I will goes to school.","I will go to school.","will ke baad V1"],["She will to come.","She will come.","will ke baad to nahi lagta"]],
+ tip:"Will ke baad hamesha base verb."},
+{icon:"🔄",title:"Present Continuous Tense",sub:"Abhi ho raha kaam",level:"g10",
+ rule:["Form: am / is / are + V-ing.","Use: abhi ho raha kaam, in dino ka kaam, tay kiya hua near future plan.","Stative verbs me continuous nahi lagta: know, like, love, want, need, understand, believe, have (own).","Spelling: run → running, make → making, sit → sitting."],
+ ex:["I am studying now.","She is cooking dinner.","They are meeting us tomorrow.","I know the answer."],
+ bad:[["I am knowing the answer.","I know the answer.","know stative verb hai"],["He is play cricket.","He is playing cricket.","is ke baad V-ing"],["She is having a car.","She has a car.","ownership ke liye have, having nahi"]],
+ tip:"Like, love, know, want, need: -ing nahi."},
+{icon:"✅",title:"Present Perfect Tense",sub:"Have / has + V3",level:"g12",
+ rule:["Form: have / has + V3 (3rd form).","Use: anubhav, abhi ka result, ya jo kaam ab tak chal raha ho.","Words: just, already, yet, ever, never, since, for.","Since = shuruaat ka point (since 2020). For = avadhi (for 5 years).","Beete hue fixed time (yesterday, last year, in 2019) ke saath present perfect nahi lagta."],
+ ex:["I have finished my work.","She has lived here for ten years.","Have you ever visited Goa?","They have not come yet."],
+ bad:[["I have seen him yesterday.","I saw him yesterday.","yesterday ke saath simple past"],["I am living here since 2010.","I have been living here since 2010.","since ke saath perfect tense"]],
+ tip:"Since = kab se. For = kitne time se."},
+{icon:"⏮️",title:"Past Perfect Tense",sub:"Had + V3, do beete kaamon me pehle wala",level:"g13",
+ rule:["Form: had + V3.","Use: jab do beete kaam hon, to jo pehle hua uske liye had + V3.","Aksar before, after, when, by the time ke saath aata hai."],
+ ex:["The train had left before I reached.","After she had eaten, she went out.","He said that he had finished the work."],
+ bad:[["The train has left before I reached.","The train had left before I reached.","pehle wala kaam had + V3"],["I had went there.","I had gone there.","had ke baad V3"]],
+ tip:"Pehla kaam = had + V3, doosra kaam = simple past."},
+{icon:"🛠️",title:"Modal Verbs",sub:"Can, could, may, might, should, must",level:"g16",
+ rule:["Can = ability / permission. Could = past ability / polite request.","May = permission / possibility. Might = kamzor possibility.","Should = salah. Must = zaroori kaam ya pakka andaza.","Modal ke baad hamesha V1 (bina to), aur modal me -s nahi lagta.","Must not = mana hai. Do not have to = zaroori nahi hai."],
+ ex:["She can swim.","Could you help me?","You should exercise daily.","You must not smoke here."],
+ bad:[["He can sings well.","He can sing well.","modal ke baad V1"],["You should to study.","You should study.","should ke baad to nahi"],["She musts go.","She must go.","modal me -s nahi"]],
+ tip:"Modal + base verb. Na to, na -s, na -ing."},
+{icon:"📍",title:"Prepositions: in, on, at",sub:"Time aur place",level:"g5",
+ rule:["Time me: at = clock / point (at 5 pm, at night, at noon). On = din aur date (on Monday, on 5 May). In = mahina, saal, season, din ka hissa (in May, in 2026, in the morning).","Place me: at = point (at the bus stop). On = surface (on the table). In = andar ya bada area (in the room, in Delhi)."],
+ ex:["I wake up at 6 am.","We meet on Sunday.","She was born in 2001.","The book is on the table."],
+ bad:[["I will meet you in Monday.","I will meet you on Monday.","din ke saath on"],["He lives at Delhi.","He lives in Delhi.","shahar ke saath in"],["I study at the morning.","I study in the morning.","morning ke saath in"]],
+ tip:"At = point, on = din/surface, in = bada time ya andar."},
+{icon:"📏",title:"Adjectives & Degrees of Comparison",sub:"Taller, tallest, more beautiful",level:"g23",
+ rule:["Chhote adjective: -er / -est (tall, taller, tallest).","Bade adjective: more / most (beautiful, more beautiful, most beautiful).","Irregular: good, better, best. bad, worse, worst. far, farther, farthest.","Comparative ke baad than aata hai. Superlative se pehle the aata hai."],
+ ex:["Ravi is taller than Mohan.","This is the most interesting book.","She is better than me at maths."],
+ bad:[["He is more taller than me.","He is taller than me.","taller me comparison pehle se hai"],["This is the most best book.","This is the best book.","best pehle se superlative hai"],["She is smarter from me.","She is smarter than me.","comparative ke baad than"]],
+ tip:"Double comparison mat karo: more + er galat hai."},
+{icon:"🏃",title:"Adverbs & Adverbs of Frequency",sub:"Quickly, well, always, never",level:"g25",
+ rule:["Adverb verb, adjective ya doosre adverb ko describe karta hai.","Zyadatar adjective + ly: slow → slowly, quick → quickly.","Irregular: good → well. fast, hard, late dono hi jagah same rehte hain (hardly = bahut kam).","Frequency adverbs: always, usually, often, sometimes, rarely, never. Yeh main verb se pehle aate hain, aur be verb ke baad."],
+ ex:["She sings well.","He always comes on time.","He is never late."],
+ bad:[["He runs quick.","He runs quickly.","verb ko describe karne ke liye adverb"],["She sings good.","She sings well.","good adjective hai, well adverb"],["I am always go to school.","I always go to school.","always main verb se pehle"]],
+ tip:"Verb ke saath adverb, noun ke saath adjective."},
+{icon:"🔗",title:"Conjunctions",sub:"And, but, because, so, although",level:"g18",
+ rule:["And = jodta hai. But = contrast. Because = karan. So = nateeja. Or = vikalp.","Although / though ke saath but nahi lagta.","Because ke saath so nahi lagta.","Not only ... but also, both ... and, either ... or, neither ... nor jodi me aate hain."],
+ ex:["I was tired, so I slept.","He stayed home because he was ill.","Although it rained, we went out."],
+ bad:[["Although he is poor, but he is honest.","Although he is poor, he is honest.","although aur but saath nahi"],["Because he was ill, so he stayed home.","Because he was ill, he stayed home.","because aur so saath nahi"]],
+ tip:"Ek vakya me ek hi conjunction ka kaam."},
+{icon:"❓",title:"Question Words & Question Tags",sub:"What, where, why aur ... isn't it?",level:"p8",
+ rule:["W-words: what (kya), where (kahan), when (kab), who (kaun), whose (kiska), which (kaunsa), why (kyun), how (kaise).","Question tag: positive vakya ke baad negative tag, negative ke baad positive tag.","Tag me wahi helping verb aata hai. Helping verb na ho to do / does / did.","Never, hardly, nobody wale vakya negative maane jaate hain, to tag positive.","I am → aren't I? Let's → shall we? Command → will you?"],
+ ex:["He is a teacher, isn't he?","They don't play, do they?","She likes tea, doesn't she?","Let's go, shall we?"],
+ bad:[["She plays well, isn't it?","She plays well, doesn't she?","tag me same helping verb"],["You are happy, are you?","You are happy, aren't you?","positive ke baad negative tag"]],
+ tip:"Tag ka subject hamesha pronoun hota hai: she, he, they."},
+{icon:"🔀",title:"Conditionals (If Sentences)",sub:"Zero, first, second, third",level:"p4",
+ rule:["Zero: If + present, present. Facts. If you heat ice, it melts.","First: If + present, will + V1. Mumkin sthiti. If it rains, I will stay.","Second: If + past, would + V1. Kalpana. If I were rich, I would travel. (were sab subjects ke saath)","Third: If + had + V3, would have + V3. Beeti baat. If I had studied, I would have passed."],
+ ex:["If you study, you will pass.","If I were you, I would apologise.","If he had come, we would have met."],
+ bad:[["If it will rain, I will stay.","If it rains, I will stay.","if clause me will nahi"],["If I would have money, I would help.","If I had money, I would help.","if clause me would nahi"]],
+ tip:"If ke baad would / will nahi lagta."},
+{icon:"🔁",title:"Passive Voice",sub:"Kaam kisne kiya se zyada, kaam par zor",level:"p6",
+ rule:["Object subject ban jaata hai, aur verb me be + V3 aata hai.","Simple present: is/am/are + V3. Simple past: was/were + V3. Future: will be + V3.","Present perfect: has/have been + V3. Present continuous: is/am/are being + V3.","'by' wala hissa zaroori nahi, agar kartaa pata ho ya zaroori na ho to hata sakte hain."],
+ ex:["Active: Ram writes a letter. Passive: A letter is written by Ram.","The work was completed yesterday.","The match will be played tomorrow."],
+ bad:[["The letter was wrote by him.","The letter was written by him.","passive me V3 aata hai"],["The work was done by he.","The work was done by him.","by ke baad object form"]],
+ tip:"Passive banane ka formula: be + V3, hamesha."},
+{icon:"💬",title:"Direct & Indirect Speech",sub:"Reported speech ke rules",level:"p7",
+ rule:["Reporting verb past ho to tense ek kadam peeche jaata hai: is → was, will → would, can → could, has → had.","Words badalte hain: now → then, today → that day, tomorrow → the next day, yesterday → the day before, here → there, this → that.","Statement: said that. Yes/no question: asked if / whether. Wh-question me asked + wh-word, aur vakya seedhe order me.","Order / request: told / ordered / requested + to + V1."],
+ ex:["He said, \"I am busy.\" → He said that he was busy.","She asked, \"Where do you live?\" → She asked where I lived.","He said to me, \"Open the door.\" → He told me to open the door."],
+ bad:[["He asked where did I live.","He asked where I lived.","reported question me seedha order"],["She said me that she was ill.","She told me that she was ill.","said ke baad me nahi, told me"]],
+ tip:"Reported question me question mark aur did/do nahi lagta."},
+{icon:"👥",title:"Relative Pronouns: Who, Which, That, Whose",sub:"Do vakyon ko jodna",level:"p3",
+ rule:["Who = log. Which = cheezein aur janwar. That = dono (defining clause me).","Whose = kiska (ownership). Whom = object ke liye (formal).","Comma wale (non-defining) clause me that nahi lagta."],
+ ex:["The boy who won is my friend.","The book which I read was good.","I met a girl whose father is a doctor."],
+ bad:[["The boy which won is here.","The boy who won is here.","insaan ke liye who"],["The book who I read was good.","The book which I read was good.","cheez ke liye which / that"]],
+ tip:"Insaan = who, cheez = which, kisi ka = whose."},
+{icon:"✍️",title:"Gerunds & Infinitives",sub:"V-ing ya to + V1",level:"p9",
+ rule:["Gerund (V-ing) ke baad: enjoy, finish, avoid, mind, keep, practise, suggest, give up. Preposition ke baad bhi V-ing aata hai.","Infinitive (to + V1) ke baad: want, decide, hope, plan, learn, agree, refuse, need, promise.","Like, love, start, begin me dono chalte hain.","Stop to + V1 = ruk kar kuch karna. Stop + V-ing = us kaam ko band karna."],
+ ex:["I enjoy reading.","She wants to learn English.","He is good at singing.","I look forward to meeting you."],
+ bad:[["I enjoy to read.","I enjoy reading.","enjoy ke baad V-ing"],["She wants going.","She wants to go.","want ke baad to + V1"],["I look forward to meet you.","I look forward to meeting you.","to yahan preposition hai"]],
+ tip:"Preposition ke baad hamesha V-ing."},
+{icon:"🎯",title:"Common Errors (Exam Special)",sub:"Competitive exams ke sabse repeat hone wale errors",level:"p10",
+ rule:["One of + plural noun + singular verb: One of my friends is here.","Prefer ... to (than nahi): I prefer tea to coffee.","Senior, junior, superior, inferior ke baad to (than nahi): He is senior to me.","Neither, each, every, either: singular verb.","Mathematics, news, physics (-ics subjects) singular hote hain.","Married to (with nahi). Agree (am agree nahi). Between you and me."],
+ ex:["One of my friends is a doctor.","I prefer tea to coffee.","He is married to a doctor."],
+ bad:[["One of my friend is a doctor.","One of my friends is a doctor.","one of ke baad plural noun"],["I am agree with you.","I agree with you.","agree khud verb hai"],["He is senior than me.","He is senior to me.","senior ke baad to"]],
+ tip:"Pehle subject-verb agreement aur preposition check karo."},
+{icon:"🔤",title:"Punctuation & Capital Letters",sub:"Full stop, comma, apostrophe",level:"p12",
+ rule:["Capital letter: vakya ka pehla word, I, naam, din, mahine, shehar, title.","Full stop (.) vakya ke ant me. Question mark (?) sawal ke ant me. Exclamation (!) bhaav ke liye.","Comma (,) list me, shuruaati word ke baad, aur do vakyon ko jodne wale conjunction se pehle.","Apostrophe: ownership (Ravi's book) aur contraction (don't). Plural banane ke liye nahi."],
+ ex:["Rohit lives in Delhi.","I bought apples, oranges and bananas.","It's Ravi's bag."],
+ bad:[["ravi lives in delhi.","Ravi lives in Delhi.","naam par capital"],["Apple's are sweet.","Apples are sweet.","plural me apostrophe nahi"]],
+ tip:"Its = uska, it's = it is."},
+{icon:"🧐",title:"Confusing Words",sub:"Milte-julte words",level:"p13",
+ rule:["their (unka) / there (wahan) / they're (they are).","your (tumhara) / you're (you are).","to (taraf) / too (bhi, bahut) / two (2).","affect (verb, asar daalna) / effect (noun, asar).","then (phir) / than (comparison).","accept (swikar karna) / except (siwaye).","advice (noun) / advise (verb).","lose (khona) / loose (dheela)."],
+ ex:["They left their bags there.","The medicine had a good effect.","She is taller than me.","I accept your advice."],
+ bad:[["Their going to school.","They're going to school.","they're = they are"],["This will effect my result.","This will affect my result.","verb ke liye affect"]],
+ tip:"Verb ke liye affect aur advise, noun ke liye effect aur advice."},
+{icon:"🔧",title:"Common Phrasal Verbs",sub:"Verb + preposition ka naya matlab",level:"p11",
+ rule:["Give up = chhodna. Look after = dekhbhal karna. Look for = dhoondhna.","Put off = taalna. Call off = radd karna. Carry on = jaari rakhna.","Turn on / turn off = chalu / band karna. Run out of = khatam ho jaana. Find out = pata lagana.","Phrasal verb ka matlab shabd-ba-shabd nahi nikaalte, poora phrase yaad karo."],
+ ex:["Don't give up.","She looks after her mother.","The match was called off.","We ran out of milk."],
+ bad:[["The meeting was put of.","The meeting was put off.","put off = postpone"],["I am looking after my keys.","I am looking for my keys.","dhoondhna = look for"]],
+ tip:"Phrasal verbs ko examples ke saath yaad karo."}
+];
+function lessonBox(title,inner){ return '<div class="lbox"><h3>'+title+'</h3>'+inner+'</div>'; }
+function renderLessonList(filter){
+  const nl=nextLessonMilestone(); $('lesson-progress').textContent='✅ Complete: '+lessonsDoneCount()+' / '+LESSONS.length+(nl?' · Next certificate at '+nl+' lessons':' · Sab complete 🎉');
+  const box=$('lesson-list'); const f=(filter||'').toLowerCase().trim(); let n=0;
+  box.innerHTML=LESSONS.map((l,i)=>{ if(f&&(l.title+' '+l.sub).toLowerCase().indexOf(f)<0) return ''; n++;
+    const st=lessonDone(l)?'✅ ':(meta.lread&&meta.lread[l.level]?'📖 ':'');
+    return '<button class="lcard" data-i="'+i+'"><span class="lic">'+l.icon+'</span><span><b>'+st+(i+1)+'. '+esc(l.title)+'</b><br><span class="small">'+esc(l.sub)+'</span></span></button>'; }).join('')||'<div class="small">Koi lesson nahi mila.</div>';
+  box.querySelectorAll('.lcard').forEach(b=>b.onclick=()=>openLesson(Number(b.dataset.i)));
+}
+function openLesson(i){
+  const l=LESSONS[i]; if(!l) return;
+  if(!meta.lread) meta.lread={}; if(!meta.lread[l.level]){ meta.lread[l.level]=true; saveMeta(); }
+  const freshL=checkLessonCerts();
+  $('lesson-list-wrap').classList.add('hidden'); $('lesson-view').classList.remove('hidden');
+  let h='<h2 style="margin:6px 0 2px">'+l.icon+' '+esc(l.title)+'</h2><div class="small" style="margin-bottom:6px">'+esc(l.sub)+'</div>';
+  h+='<div class="small" style="margin-bottom:10px">'+(lessonDone(l)?'✅ Complete (lesson padha + quiz pass)':'📖 Lesson padh liya. Ab practice quiz kam se kam 1 ⭐ ke saath pass karo, tabhi ye lesson complete maana jayega.')+'</div>';
+  if(freshL.length) h+='<div class="certbanner">🎓 Grammar Lessons certificate unlocked! <button class="btn" id="les-cert" style="margin-top:6px">🎓 Certificate dekho</button></div>';
+  h+=lessonBox('📌 Rule','<ul>'+l.rule.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul>');
+  h+=lessonBox('✅ Examples','<ul>'+l.ex.map(r=>'<li>'+esc(r)+'</li>').join('')+'</ul>');
+  h+=lessonBox('⚠️ Common mistakes','<div>'+l.bad.map(b=>'<div class="lmis"><div class="lx">❌ '+esc(b[0])+'</div><div class="lok">✅ '+esc(b[1])+'</div><div class="small">'+esc(b[2])+'</div></div>').join('')+'</div>');
+  h+=lessonBox('💡 Tip','<div>'+esc(l.tip)+'</div>');
+  const hasLvl=(typeof LEVEL_BY_ID!=='undefined')&&!!LEVEL_BY_ID[l.level];
+  h+='<div class="actions">'+(hasLvl?'<button class="btn primary" id="les-practice">🎯 Practice karo ▶</button>':'')+'</div>';
+  h+='<div class="actions"><button class="btn" id="les-prev"'+(i===0?' disabled':'')+'>← Previous</button><button class="btn" id="les-next"'+(i===LESSONS.length-1?' disabled':'')+'>Next →</button></div>';
+  $('lesson-body').innerHTML=h;
+  const pr=$('les-practice'); if(pr) pr.onclick=()=>startLevel(l.level);
+  const lc=$('les-cert'); if(lc) lc.onclick=showCerts;
+  $('les-prev').onclick=()=>openLesson(i-1); $('les-next').onclick=()=>openLesson(i+1);
+  try{window.scrollTo(0,0);}catch(e){}
+}
+function showLessons(){ show('lessons'); $('lesson-view').classList.add('hidden'); $('lesson-list-wrap').classList.remove('hidden'); renderLessonList($('lesson-search').value); }
+
 /* ================= CERTIFICATES (every 10 passed levels) ================= */
 const CERT_EVERY=10;
 const GAME_URL='https://rohitwebcraft.github.io/Rohit-Sir-English-Quest/';
@@ -4989,6 +5510,27 @@ function drawQR(g,text,x,y,size){
 }
 function passedCount(){ return Object.values(progress).filter(p=>(p.stars||0)>=1).length; }
 function pad(n,w){ return String(n).padStart(w,'0'); }
+
+const LESSON_MILESTONES=[10,20,27];
+function isLessonRec(rec){ return String(rec.id||'').indexOf('RSGL')===0; }
+function certUnit(rec){ return isLessonRec(rec)?'lessons':'levels'; }
+function certNo(rec){ return isLessonRec(rec)?(LESSON_MILESTONES.indexOf(rec.levels)+1||Math.ceil(rec.levels/10)):Math.round(rec.levels/CERT_EVERY); }
+function certLabel(rec){ return isLessonRec(rec)?('Grammar Lessons · '+rec.levels):(rec.levels+' levels'); }
+function certFile(rec){ return 'Certificate-'+(isLessonRec(rec)?'grammar-lessons-':'')+rec.levels+'-'+certUnit(rec)+'-'+String(rec.name).replace(/\s+/g,'_')+'.png'; }
+/* A lesson counts as complete only when the student has opened the lesson AND passed its practice quiz (1+ star). */
+function lessonDone(l){ const pr=progress[l.level]; return !!(meta.lread&&meta.lread[l.level]&&pr&&(pr.stars||0)>=1); }
+function lessonsDoneCount(){ return LESSONS.filter(lessonDone).length; }
+function nextLessonMilestone(){ const c=lessonsDoneCount(); for(let i=0;i<LESSON_MILESTONES.length;i++) if(LESSON_MILESTONES[i]>c) return LESSON_MILESTONES[i]; return 0; }
+function checkLessonCerts(){
+  const c=lessonsDoneCount(), fresh=[];
+  LESSON_MILESTONES.forEach(m=>{ const key='L'+m; if(c>=m&&!meta.certs[key]){
+    const d=new Date(); const code=Math.random().toString(36).slice(2,6).toUpperCase();
+    meta.certs[key]={name:studentName||'Student',date:dayStr(d),t:Date.now(),id:'RSGL-'+d.getFullYear()+'-'+pad(m,3)+'-'+code,levels:m,stars:totalStars(),xp:meta.xp,rank:rankFor(meta.xp).name};
+    fresh.push(key); } });
+  if(fresh.length) saveMeta();
+  return fresh;
+}
+function certKeys(){ return Object.keys(meta.certs).sort((a,b)=>{ const A=meta.certs[a],B=meta.certs[b]; return (B.t||0)-(A.t||0) || (isLessonRec(B)?1:0)-(isLessonRec(A)?1:0) || B.levels-A.levels; }); }
 function checkCerts(){
   const earned=Math.floor(passedCount()/CERT_EVERY), fresh=[];
   for(let n=1;n<=earned;n++){
@@ -4996,7 +5538,7 @@ function checkCerts(){
     const d=new Date();
     const code=Math.random().toString(36).slice(2,6).toUpperCase();
     meta.certs[n]={name:studentName||'Student',date:dayStr(d),id:'RSEQ-'+d.getFullYear()+'-'+pad(n*CERT_EVERY,3)+'-'+code,
-      levels:n*CERT_EVERY,stars:totalStars(),xp:meta.xp,rank:rankFor(meta.xp).name};
+      levels:n*CERT_EVERY,t:Date.now(),stars:totalStars(),xp:meta.xp,rank:rankFor(meta.xp).name};
     fresh.push(n);
   }
   if(fresh.length) saveMeta();
@@ -5039,12 +5581,12 @@ function makeCert(rec){
     });
     g.textAlign='center'; g.textBaseline='alphabetic';
     drawLogo(g,W/2,190,92);
-    g.fillStyle='#7a2f10'; g.font='bold 20px Arial'; g.fillText('CERTIFICATE No.',290,170); g.font='bold 78px Georgia, serif'; g.fillText(pad(rec.levels/CERT_EVERY,2),290,250);
-    g.fillStyle='#8a7a68'; g.font='16px Arial'; g.fillText(rec.levels+' LEVELS',290,282);
+    g.fillStyle='#7a2f10'; g.font='bold 20px Arial'; g.fillText('CERTIFICATE No.',290,170); g.font='bold 78px Georgia, serif'; g.fillText(pad(certNo(rec),2),290,250);
+    g.fillStyle='#8a7a68'; g.font='16px Arial'; g.fillText(rec.levels+' '+certUnit(rec).toUpperCase(),290,282);
     if(SHEET_URL&&drawQR(g,verifyUrl(rec),W-450,104,190)){ g.fillStyle='#7a2f10'; g.font='bold 16px Arial'; g.fillText('SCAN TO VERIFY',W-355,324); }
     g.fillStyle='#7a2f10'; g.font='bold 30px Arial'; g.fillText('ROHIT SIR ENGLISH QUEST',W/2,322);
     g.fillStyle='#7a2f10'; g.font='bold 104px Georgia, "Times New Roman", serif'; g.fillText('CERTIFICATE',W/2,435);
-    g.fillStyle='#c9622b'; g.font='34px Georgia, serif'; g.fillText('O F   A C H I E V E M E N T',W/2,490);
+    g.fillStyle='#c9622b'; g.font='34px Georgia, serif'; g.fillText(isLessonRec(rec)?'O F   G R A M M A R   M A S T E R Y':'O F   A C H I E V E M E N T',W/2,490);
     g.strokeStyle='#d9a441'; g.lineWidth=3; g.beginPath(); g.moveTo(W/2-260,516); g.lineTo(W/2+260,516); g.stroke();
     g.fillStyle='#555'; g.font='italic 28px Georgia, serif'; g.fillText('This is proudly presented to',W/2,572);
     // name, shrink to fit
@@ -5053,9 +5595,9 @@ function makeCert(rec){
     g.fillText(nm,W/2,672);
     g.strokeStyle='#7a2f10'; g.lineWidth=2; g.beginPath(); g.moveTo(W/2-420,700); g.lineTo(W/2+420,700); g.stroke();
     g.fillStyle='#333'; g.font='28px Georgia, serif';
-    wrapText(g,'for successfully completing '+rec.levels+' levels of the Rohit Sir English Quest and showing dedication, consistency and real progress in learning English.',W/2,752,1020,42);
+    wrapText(g,isLessonRec(rec)?('for successfully completing '+rec.levels+' Grammar Lessons (study + practice quiz) of the Rohit Sir English Quest with real progress.'):('for successfully completing '+rec.levels+' levels of the Rohit Sir English Quest and showing dedication, consistency and real progress in learning English.'),W/2,752,1020,42);
     // stats
-    const stats=[['LEVELS',String(rec.levels)],['STARS',String(rec.stars)],['XP',String(rec.xp)],['RANK',rec.rank]];
+    const stats=[[certUnit(rec).toUpperCase(),String(rec.levels)],['STARS',String(rec.stars)],['XP',String(rec.xp)],['RANK',rec.rank]];
     stats.forEach((a,i)=>{ const x=W/2-420+i*280; g.fillStyle='#7a2f10'; g.font='bold 40px Arial'; g.fillText(a[1],x,872); g.fillStyle='#8a7a68'; g.font='bold 18px Arial'; g.fillText(a[0],x,898); });
     // date
     const dt=new Date(rec.date+'T00:00:00'); const ds=isNaN(dt)?rec.date:dt.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
@@ -5071,36 +5613,37 @@ function makeCert(rec){
     g.fillStyle=sg; g.beginPath(); for(let i=0;i<32;i++){ const a=i*Math.PI/16, rad=i%2?66:76; i?g.lineTo(sx+Math.cos(a)*rad,sy+Math.sin(a)*rad):g.moveTo(sx+Math.cos(a)*rad,sy+Math.sin(a)*rad);} g.closePath(); g.fill();
     g.lineWidth=3; g.strokeStyle='#7a2f10'; g.beginPath(); g.arc(sx,sy,54,0,Math.PI*2); g.stroke();
     g.fillStyle='#7a2f10'; starPath(g,sx,sy-8,26,11); g.fill();
-    g.font='bold 15px Arial'; g.fillText('OFFICIAL',sx,sy+32); g.font='bold 13px Arial'; g.fillText('No. '+(rec.levels/CERT_EVERY),sx,sy+47);
+    g.font='bold 15px Arial'; g.fillText('OFFICIAL',sx,sy+32); g.font='bold 13px Arial'; g.fillText('No. '+certNo(rec),sx,sy+47);
     g.fillStyle='#8a7a68'; g.font='17px Arial'; g.fillText('Certificate ID: '+rec.id+'   ·   rohitwebcraft.github.io/Rohit-Sir-English-Quest',W/2,1076);
     return c.toDataURL('image/png');
   }catch(e){return null;}
 }
-function certShareText(rec){ return 'I earned my Certificate No. '+(rec.levels/CERT_EVERY)+' ('+rec.levels+' levels completed) in Rohit Sir English Quest! Try it: '+(window.location?window.location.href:''); }
+function certShareText(rec){ return 'I earned my Certificate No. '+certNo(rec)+' ('+rec.levels+' '+certUnit(rec)+' completed) in Rohit Sir English Quest! Try it: '+(window.location?window.location.href:''); }
 async function shareCert(url,rec){
   try{
-    const blob=await (await fetch(url)).blob(); const f=new File([blob],'certificate-'+rec.levels+'-levels.png',{type:'image/png'});
+    const blob=await (await fetch(url)).blob(); const f=new File([blob],certFile(rec),{type:'image/png'});
     if(navigator.canShare&&navigator.canShare({files:[f]})){ await navigator.share({files:[f],text:certShareText(rec)}); return; }
   }catch(e){ if(e&&e.name==='AbortError') return; }
   window.open('https://wa.me/?text='+encodeURIComponent(certShareText(rec)),'_blank');
 }
 function certButtons(n,url){
   const rec=meta.certs[n]; const b=[];
-  if(url){ b.push({label:'🎓 Download certificate',cls:'primary',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'});
+  if(url){ b.push({label:'🎓 Download certificate',cls:'primary',href:url,download:certFile(rec)});
            b.push({label:'📤 Share certificate',fn:()=>shareCert(url,rec)}); }
   return b;
 }
 function showCerts(){
-  checkCerts(); const ns=Object.keys(meta.certs).map(Number).sort((a,b)=>b-a);
-  const pc=passedCount(), nextAt=(Math.floor(pc/CERT_EVERY)+1)*CERT_EVERY;
-  let extra='<div class="small" style="margin-bottom:8px">Next certificate at '+nextAt+' passed levels ('+pc+' / '+nextAt+')</div>';
+  checkCerts(); checkLessonCerts(); const ks=certKeys();
+  const pc=passedCount(), nextAt=(Math.floor(pc/CERT_EVERY)+1)*CERT_EVERY, ld=lessonsDoneCount(), nl=nextLessonMilestone();
+  let extra='<div class="small" style="margin-bottom:4px">📊 Levels: next certificate at '+nextAt+' passed levels ('+pc+' / '+nextAt+')</div>'+
+    '<div class="small" style="margin-bottom:8px">📖 Grammar Lessons: '+(nl?('next certificate at '+nl+' lessons ('+ld+' / '+nl+')'):('sab '+LESSONS.length+' lessons complete 🎉'))+'</div>';
   const buttons=[];
-  if(!ns.length) extra+='<div class="small">Abhi tak koi certificate nahi. Har 10 levels (kam se kam 1 ⭐) par ek Official Certificate milega.</div>';
-  ns.forEach(n=>{ const rec=meta.certs[n]; const url=makeCert(rec);
-    if(url){ extra+='<div class="small"><b>'+rec.levels+' levels</b> · '+esc(rec.date)+'</div><img class="certimg" alt="Certificate" src="'+url+'">';
-      buttons.push({label:'⬇ '+rec.levels+' levels certificate',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'}); } });
+  if(!ks.length) extra+='<div class="small">Abhi tak koi certificate nahi. Har 10 levels (kam se kam 1 ⭐) par aur 10, 20, '+LESSONS.length+' Grammar Lessons (lesson padho + uska quiz pass karo) par Official Certificate milega.</div>';
+  ks.forEach(k=>{ const rec=meta.certs[k]; const url=makeCert(rec);
+    if(url){ extra+='<div class="small"><b>'+esc(certLabel(rec))+'</b> · '+esc(rec.date)+'</div><img class="certimg" alt="Certificate" src="'+url+'">';
+      buttons.push({label:'⬇ '+certLabel(rec)+' certificate',href:url,download:certFile(rec)}); } });
   buttons.push({label:'Back to Levels',cls:'primary',fn:goToMap});
-  showResult({emoji:'🎓',score:ns.length+' certificate'+(ns.length===1?'':'s'),msg:'Rohit Sir English Quest',extra,buttons});
+  showResult({emoji:'🎓',score:ks.length+' certificate'+(ks.length===1?'':'s'),msg:'Rohit Sir English Quest',extra,buttons});
 }
 
 function finishSession(){
@@ -5114,9 +5657,9 @@ function finishSession(){
     const info={title:l.title,score,total,stars}; const url=makeCard(info);
     const gain='<div class="gain">+'+S.xp+' XP'+(bonus?' (incl. '+bonus+' bonus)':'')+'</div>';
     const nxt=LEVELS[l._idx+1]; const speakable=uniq(l.questions.filter(eligibleSentence).map(q=>q.opts[q.a])).length>=2;
-    const buttons=[]; const newC=checkCerts(); let certExtra='', certBtns=[];
+    const buttons=[]; const newC=checkCerts().concat(checkLessonCerts()); let certExtra='', certBtns=[];
     if(newC.length){ const n=newC[newC.length-1]; const cu=makeCert(meta.certs[n]);
-      if(cu){ certExtra='<div class="certbanner">🎓 Congratulations! Certificate unlocked — '+meta.certs[n].levels+' levels completed</div><img class="certimg" alt="Certificate" src="'+cu+'">'; certBtns=certButtons(n,cu); } }
+      if(cu){ certExtra='<div class="certbanner">🎓 Congratulations! Certificate unlocked — '+meta.certs[n].levels+' '+certUnit(meta.certs[n])+' completed</div><img class="certimg" alt="Certificate" src="'+cu+'">'; certBtns=certButtons(n,cu); } }
     if(nxt) buttons.push({label:'Next level ▶',cls:'primary',fn:()=>startLevel(nxt.id)});
     if(speakable) buttons.push({label:'🎤 Speaking round',fn:()=>startSpeak(l.id)});
     buttons.push({label:'🔁 Retry',fn:()=>startLevel(l.id)});
@@ -5205,14 +5748,16 @@ $('next-btn').onclick=()=>{ if($('next-btn').dataset.mode==='check') checkBuild(
 $('quiz-back').onclick=goToMap; $('speak-back').onclick=goToMap;
 $('speak-listen').onclick=()=>{ if(SP) speak(SP.list[SP.i],0.9); };
 $('speak-mic').onclick=onMic; $('speak-next').onclick=nextSpeak;
-$('btn-certs').onclick=showCerts; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
+$('btn-certs').onclick=showCerts; $('btn-lessons').onclick=showLessons;
+$('lesson-search').oninput=()=>renderLessonList($('lesson-search').value);
+$('lesson-back').onclick=()=>{ if(!$('lesson-view').classList.contains('hidden')){ $('lesson-view').classList.add('hidden'); $('lesson-list-wrap').classList.remove('hidden'); try{window.scrollTo(0,0);}catch(e){} } else goToMap(); }; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
 $('search').oninput=renderSections;
 ['sound','voice','hindi'].forEach(k=>{ $('tg-'+k).onclick=()=>{ meta.settings[k]=!meta.settings[k]; saveMeta(); renderToggles(); }; });
 let resetArmed=false, resetTimer=null;
 $('btn-reset').onclick=()=>{
   if(!resetArmed){ resetArmed=true; $('btn-reset').textContent='Tap again to confirm reset'; clearTimeout(resetTimer);
     resetTimer=setTimeout(()=>{resetArmed=false; $('btn-reset').textContent='Reset all progress';},4000); return; }
-  progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},settings:meta.settings}; saveProgress(); saveMeta();
+  progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},settings:meta.settings}; saveProgress(); saveMeta();
   resetArmed=false; $('btn-reset').textContent='Reset all progress'; renderMap();
 };
 function submitName(){
@@ -5235,8 +5780,8 @@ async function openVerified(id){
     const rec={id:j.id,name:j.name,levels:Number(j.levels)||CERT_EVERY,date:String(j.date),stars:Number(j.stars)||0,xp:Number(j.xp)||0,rank:j.rank||'Beginner'};
     const url=makeCert(rec);
     showResult({emoji:'✅',score:'Verified',msg:'Certificate for '+rec.name,
-      extra:'<div class="certbanner">✅ Yeh certificate asli hai — '+rec.levels+' levels · '+esc(rec.date)+'</div>'+(url?'<img class="certimg" alt="Certificate" src="'+url+'">':''),
-      buttons:(url?[{label:'🎓 Download certificate',cls:'primary',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'},{label:'📤 Share certificate',fn:()=>shareCert(url,rec)}]:[]).concat([{label:'Open the game',href:GAME_URL}])});
+      extra:'<div class="certbanner">✅ Yeh certificate asli hai — '+esc(certLabel(rec))+' · '+esc(rec.date)+'</div>'+(url?'<img class="certimg" alt="Certificate" src="'+url+'">':''),
+      buttons:(url?[{label:'🎓 Download certificate',cls:'primary',href:url,download:certFile(rec)},{label:'📤 Share certificate',fn:()=>shareCert(url,rec)}]:[]).concat([{label:'Open the game',href:GAME_URL}])});
   }catch(e){ showResult({emoji:'📡',score:'Check nahi ho paya',msg:'Internet check karke dobara try karo.',extra:'',buttons:[{label:'Retry',cls:'primary',fn:()=>window.location.reload()}].concat(back)}); }
 }
 function openSharedCert(){
@@ -5246,8 +5791,8 @@ function openSharedCert(){
     const id=q.get('cert'); if(!id) return false;
     const rec={id:id,name:q.get('n')||'Student',levels:parseInt(q.get('l'),10)||CERT_EVERY,date:q.get('d')||dayStr(new Date()),stars:parseInt(q.get('s'),10)||0,xp:parseInt(q.get('x'),10)||0,rank:q.get('r')||'Beginner'};
     const url=makeCert(rec); if(!url) return false;
-    showResult({emoji:'🎓',score:rec.levels+' levels',msg:'Certificate for '+rec.name,extra:'<div class="small">Certificate ID: '+esc(rec.id)+'</div><img class="certimg" alt="Certificate" src="'+url+'">',
-      buttons:[{label:'🎓 Download certificate',cls:'primary',href:url,download:'Certificate-'+rec.levels+'-levels-'+rec.name.replace(/\s+/g,'_')+'.png'},{label:'📤 Share certificate',fn:()=>shareCert(url,rec)},
+    showResult({emoji:'🎓',score:rec.levels+' '+certUnit(rec),msg:'Certificate for '+rec.name,extra:'<div class="small">Certificate ID: '+esc(rec.id)+'</div><img class="certimg" alt="Certificate" src="'+url+'">',
+      buttons:[{label:'🎓 Download certificate',cls:'primary',href:url,download:certFile(rec)},{label:'📤 Share certificate',fn:()=>shareCert(url,rec)},
         {label:'Open the game',href:GAME_URL}]});
     return true;
   }catch(e){return false;}
