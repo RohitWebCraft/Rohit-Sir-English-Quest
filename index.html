@@ -190,11 +190,17 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
   <div id="screen-name" class="hidden center">
     <h1>Rohit Sir English Quest</h1>
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
-    <div class="card">
+    <div class="card hidden" id="who-card">
+      <div class="q-text-en" style="margin-bottom:14px;">👋 Kya aap <b id="who-name"></b> hain?</div>
+      <button class="next-btn" id="who-yes">✅ Haan, main hi hu — Continue ▶</button>
+      <button class="btn" id="who-no" style="margin-top:10px; width:100%;">🔄 Nahi, main dusra student hu</button>
+      <div class="small" style="margin-top:10px;">Ek tablet par kai students khelte hain, isliye ye poochha ja raha hai.</div>
+    </div>
+    <div class="card" id="name-card">
       <div class="q-text-en" style="margin-bottom:14px;">👋 Apna naam likho</div>
       <input class="search" id="name-input" type="text" placeholder="Your full name" autocomplete="off" style="margin-bottom:14px;">
       <button class="next-btn" id="name-start">Start Playing ▶</button>
-      <div class="small" style="margin-top:10px;">Yeh naam aapke teacher ko progress dikhane ke liye use hota hai.</div>
+      <div class="small" style="margin-top:10px;">Apna poora naam likho (jaise: Sapna Vanshkar). Dusre student ka naam mat likhna. Yeh naam teacher ko progress dikhane ke liye use hota hai. Pehle khela hai to wahi naam likho, progress wapas aa jayega.</div>
     </div>
   </div>
 
@@ -202,7 +208,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
   <div id="screen-map" class="hidden">
     <h1>Rohit Sir English Quest</h1>
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
-    <div class="small" id="whoami" style="margin-bottom:10px; cursor:pointer;"></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;"><span class="small" id="whoami"></span><button class="btn" id="btn-switch" style="width:auto; padding:6px 12px; font-size:13px; flex:none;">🔄 Student badlo</button></div>
 
     <div class="stats">
       <div class="stat"><b id="st-streak">0</b><span>🔥 day streak</span></div>
@@ -252,7 +258,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div id="sections"></div>
 
     <footer>Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</footer>
-    <div class="center"><button class="resetbtn" id="btn-reset">Reset all progress</button></div>
+    <div class="center"><button class="resetbtn" id="btn-reset">Reset my progress</button></div>
   </div>
 
   <!-- GRAMMAR LESSONS -->
@@ -4983,13 +4989,32 @@ function saveMeta(){save(K_META,meta);}
 const K_NAME='fea_quest_name';
 const SHEET_URL='https://script.google.com/macros/s/AKfycbwRWpCXUUqOx7IaDJ2au84upplylXnDXcOIFukupWg6nWD8PsWtBMBBLvgBfAP1t0qg/exec';
 let studentName=load(K_NAME,'');
+const K_PROFILES='fea_quest_profiles', K_CONF='fea_quest_confirmed';
+function cleanName(n){ return String(n||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|\s)(\S)/g,function(m,sp,ch){ return sp+ch.toUpperCase(); }); }
+function nameKey(n){ return cleanName(n).toLowerCase(); }
+function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},settings:meta.settings}; }
+function backupData(){
+  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,mistakes:(meta.mistakes||[]).slice(-60)};
+  let b={progress:progress,meta:m};
+  try{ if(JSON.stringify(b).length>45000){ m.mistakes=[]; } if(JSON.stringify(b).length>45000){ m.open={}; } }catch(e){}
+  return b;
+}
+/* Each device keeps every student's progress separately (by name) so the next student never inherits it. */
+function snapshotProfile(){ if(!studentName) return; try{ const pf=load(K_PROFILES,{}); pf[nameKey(studentName)]={name:studentName,progress:progress,meta:meta,t:Date.now()}; save(K_PROFILES,pf); }catch(e){} }
+async function fetchBackup(name){
+  if(!SHEET_URL) return null;
+  const ctl=(typeof AbortController!=='undefined')?new AbortController():null; const tm=setTimeout(()=>{ try{ctl&&ctl.abort();}catch(e){} },7000);
+  try{ const r=await fetch(SHEET_URL+'?action=load&name='+encodeURIComponent(name),ctl?{signal:ctl.signal}:{}); const j=await r.json(); return (j&&j.ok&&j.data&&j.data.progress)?j.data:null; }
+  catch(e){ return null; } finally{ clearTimeout(tm); }
+}
 function syncToSheet(){
   if(!studentName||!SHEET_URL) return;
   try{
     const r=rankFor(meta.xp);
     const payload={name:studentName, levelsDone:Object.keys(progress).length, totalLevels:LEVELS.length,
       stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak(), certificates:Object.keys(meta.certs||{}).length,
-      certs:Object.keys(meta.certs||{}).map(k=>{const c=meta.certs[k]; return {id:c.id,name:c.name,levels:c.levels,date:c.date,stars:c.stars,xp:c.xp,rank:c.rank,t:c.t||0};})};
+      certs:Object.keys(meta.certs||{}).map(k=>{const c=meta.certs[k]; return {id:c.id,name:c.name,levels:c.levels,date:c.date,stars:c.stars,xp:c.xp,rank:c.rank,t:c.t||0};}),
+      backup:backupData()};
     fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
   }catch(e){}
 }
@@ -5099,7 +5124,7 @@ function renderToggles(){
   set('tg-sound',s.sound,'🔊 Sound'); set('tg-voice',s.voice,'🗣 Voice'); set('tg-hindi',s.hindi,'🇮🇳 Hindi hint');
 }
 function renderMap(){
-  $('whoami').textContent='👤 '+(studentName||'')+'  ✏️';
+  $('whoami').textContent='👤 '+(studentName||'');
   $('st-streak').textContent=shownStreak(); $('st-stars').textContent=totalStars(); $('st-xp').textContent=meta.xp;
   const r=rankFor(meta.xp), nr=nextRank(meta.xp);
   $('st-rank').textContent=r.emoji; $('st-rank-l').textContent=r.name;
@@ -5772,24 +5797,47 @@ $('lesson-search').oninput=()=>renderLessonList($('lesson-search').value);
 $('lesson-back').onclick=()=>{ if(!$('lesson-view').classList.contains('hidden')){ $('lesson-view').classList.add('hidden'); $('lesson-list-wrap').classList.remove('hidden'); try{window.scrollTo(0,0);}catch(e){} } else goToMap(); }; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
 $('search').oninput=renderSections;
 ['sound','voice','hindi'].forEach(k=>{ $('tg-'+k).onclick=()=>{ meta.settings[k]=!meta.settings[k]; saveMeta(); renderToggles(); }; });
-let resetArmed=false, resetTimer=null;
 $('btn-reset').onclick=()=>{
-  if(!resetArmed){ resetArmed=true; $('btn-reset').textContent='Tap again to confirm reset'; clearTimeout(resetTimer);
-    resetTimer=setTimeout(()=>{resetArmed=false; $('btn-reset').textContent='Reset all progress';},4000); return; }
-  progress={}; meta={xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},settings:meta.settings}; saveProgress(); saveMeta();
-  resetArmed=false; $('btn-reset').textContent='Reset all progress'; renderMap();
+  if(!window.confirm('⚠️ '+(studentName||'Is student')+' ka SAARA progress zero ho jayega (teacher sheet me bhi).\n\nNaye student ke liye ye mat dabao, upar "Student badlo" dabao.\n\nPakka reset karna hai?')) return;
+  progress={}; meta=freshMeta(); saveProgress(); saveMeta(); renderMap(); syncToSheet();
 };
-function submitName(){
-  const v=$('name-input').value.trim();
+function showNameScreen(mode){
+  $('who-card').classList.toggle('hidden',mode!=='who'); $('name-card').classList.toggle('hidden',mode==='who');
+  if(mode==='who') $('who-name').textContent=studentName; else { $('name-input').value=''; $('name-start').disabled=false; $('name-start').textContent='Start Playing ▶'; }
+  show('name'); if(mode!=='who'){ try{ $('name-input').focus(); }catch(e){} }
+}
+function confirmedNow(){ try{ sessionStorage.setItem(K_CONF,nameKey(studentName)); }catch(e){} }
+function switchStudent(skipAsk){
+  if(skipAsk!==true&&!window.confirm((studentName?studentName+' ka progress is device par save rahega.\n':'')+'Naya student shuru karna hai?')) return;
+  snapshotProfile(); syncToSheet();
+  progress={}; meta=freshMeta(); studentName=''; save(K_NAME,''); saveProgress(); saveMeta();
+  try{ sessionStorage.removeItem(K_CONF); }catch(e){}
+  showNameScreen('name');
+}
+async function submitName(){
+  const v=cleanName($('name-input').value);
   if(!v){ $('name-input').focus(); return; }
-  studentName=v; save(K_NAME,studentName); show('map'); syncToSheet();
+  const btn=$('name-start'); btn.disabled=true; btn.textContent='Checking…';
+  const pf=load(K_PROFILES,{}); const local=pf[nameKey(v)]||null;
+  const cloud=await fetchBackup(v);
+  let best=local;
+  if(cloud&&(!best||((cloud.meta&&cloud.meta.xp)||0)>((best.meta&&best.meta.xp)||0))) best={progress:cloud.progress,meta:cloud.meta||{}};
+  if(best){
+    const lv=Object.keys(best.progress||{}).length, xp=(best.meta&&best.meta.xp)||0;
+    if(lv>0||xp>0){
+      if(!window.confirm('"'+v+'" ka purana progress mila: '+lv+' levels, '+xp+' XP.\n\nOK = ye main hi hu, progress continue karo.\nCancel = ye mera progress nahi hai (alag naam likho, jaise Sapna V.).')){ btn.disabled=false; btn.textContent='Start Playing ▶'; return; }
+      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{}},best.meta||{},{settings:meta.settings});
+      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{};
+      saveProgress(); saveMeta();
+    }
+  }
+  studentName=v; save(K_NAME,studentName); confirmedNow(); show('map'); syncToSheet();
 }
 $('name-start').onclick=submitName;
 $('name-input').onkeydown=e=>{ if(e.key==='Enter') submitName(); };
-$('whoami').onclick=()=>{
-  const v=window.prompt('Apna naam edit karo:',studentName);
-  if(v&&v.trim()){ studentName=v.trim(); save(K_NAME,studentName); renderMap(); syncToSheet(); }
-};
+$('btn-switch').onclick=()=>switchStudent();
+$('who-yes').onclick=()=>{ confirmedNow(); show('map'); };
+$('who-no').onclick=()=>switchStudent(true);
 async function openVerified(id){
   const back=[{label:'Open the game',cls:'primary',href:GAME_URL}];
   showResult({emoji:'🔎',score:'Checking…',msg:'Certificate ID: '+id,extra:'',buttons:[]});
@@ -5817,7 +5865,8 @@ function openSharedCert(){
   }catch(e){return false;}
 }
 if(openSharedCert()){ /* certificate viewer opened */ }
-else if(studentName){ show('map'); } else { show('name'); }
+else if(studentName){ let c=''; try{ c=sessionStorage.getItem(K_CONF)||''; }catch(e){} if(c===nameKey(studentName)) show('map'); else showNameScreen('who'); }
+else { showNameScreen('name'); }
 </script>
 </body>
 </html>
