@@ -4978,7 +4978,7 @@ const K_PROG='fea_quest_progress', K_META='fea_quest_meta';
 let progress=load(K_PROG,{});
 let meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:{}},load(K_META,{}));
 meta.settings=Object.assign({sound:true,voice:true,hindi:true},meta.settings||{});
-meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{};
+meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{};
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
@@ -4989,9 +4989,9 @@ let studentName=load(K_NAME,'');
 const K_PROFILES='fea_quest_profiles', K_CONF='fea_quest_confirmed';
 function cleanName(n){ return String(n||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|\s)(\S)/g,function(m,sp,ch){ return sp+ch.toUpperCase(); }); }
 function nameKey(n){ return cleanName(n).toLowerCase(); }
-function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},settings:meta.settings}; }
+function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},settings:meta.settings}; }
 function backupData(){
-  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,mistakes:(meta.mistakes||[]).slice(-60)};
+  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,stats:meta.stats,mistakes:(meta.mistakes||[]).slice(-60)};
   let b={progress:progress,meta:m};
   try{ if(JSON.stringify(b).length>45000){ m.mistakes=[]; } if(JSON.stringify(b).length>45000){ m.open={}; } }catch(e){}
   return b;
@@ -5004,6 +5004,23 @@ async function fetchBackup(name){
   try{ const r=await fetch(SHEET_URL+'?action=load&name='+encodeURIComponent(name),ctl?{signal:ctl.signal}:{}); const j=await r.json(); return (j&&j.ok&&j.data&&j.data.progress)?j.data:null; }
   catch(e){ return null; } finally{ clearTimeout(tm); }
 }
+const K_PEND='fea_quest_pending';
+function statsPayload(){
+  const o=[]; const st=meta.stats||{};
+  Object.keys(st).forEach(id=>{ const l=(typeof LEVEL_BY_ID!=='undefined')?LEVEL_BY_ID[id]:null; if(st[id].a>0) o.push({id:id,t:l?String(l.title).slice(0,70):id,w:st[id].w,a:st[id].a}); });
+  return o;
+}
+/* Offline-safe: every sync is a full snapshot, so we keep only the LATEST one per student and re-send it when the net is back. */
+function sendPayload(p){
+  return fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
+}
+function flushPending(){
+  if(!SHEET_URL) return;
+  try{
+    const q=load(K_PEND,{}); const keys=Object.keys(q); if(!keys.length) return;
+    keys.forEach(k=>{ sendPayload(q[k]).then(()=>{ const c=load(K_PEND,{}); if(c[k]&&c[k].ts===q[k].ts){ delete c[k]; save(K_PEND,c); } }).catch(()=>{}); });
+  }catch(e){}
+}
 function syncToSheet(){
   if(!studentName||!SHEET_URL) return;
   try{
@@ -5011,10 +5028,14 @@ function syncToSheet(){
     const payload={name:studentName, levelsDone:Object.keys(progress).length, totalLevels:LEVELS.length,
       stars:totalStars(), xp:meta.xp, rank:r.name, streak:shownStreak(), certificates:Object.keys(meta.certs||{}).length,
       certs:Object.keys(meta.certs||{}).map(k=>{const c=meta.certs[k]; return {id:c.id,name:c.name,levels:c.levels,date:c.date,stars:c.stars,xp:c.xp,rank:c.rank,t:c.t||0};}),
-      backup:backupData()};
-    fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+      wrong:statsPayload(), backup:backupData(), ts:Date.now()};
+    const q=load(K_PEND,{}); q[nameKey(studentName)]=payload; save(K_PEND,q);
+    flushPending();
   }catch(e){}
 }
+window.addEventListener('online',flushPending);
+setTimeout(flushPending,2500);
+setInterval(flushPending,60000);
 
 /* ================= LEVEL META ================= */
 const SECTION_ORDER=['A','B','C','D','E','F'];
@@ -5324,6 +5345,7 @@ function finishAnswer(correct,correctText){
   answered=true; const it=S.items[S.i]; const key=it.lid+'|'+it.qi; const was=meta.mistakes.includes(key);
   if(correct){ S.score++; addXP(10+(was?5:0)); if(was) meta.mistakes=meta.mistakes.filter(k=>k!==key); }
   else if(!was){ meta.mistakes.push(key); if(meta.mistakes.length>300) meta.mistakes.shift(); }
+  if(!meta.stats) meta.stats={}; const stt=meta.stats[it.lid]||(meta.stats[it.lid]={w:0,a:0}); stt.a++; if(!correct) stt.w++;
   saveMeta();
   const phrase=celebrate(correct); const fb=$('feedback');
   fb.textContent=correct?('✅ '+phrase+' — sahi jawab!'):('❌ '+phrase+' — sahi jawab: '+correctText);
@@ -5821,8 +5843,8 @@ async function submitName(){
     const lv=Object.keys(best.progress||{}).length, xp=(best.meta&&best.meta.xp)||0;
     if(lv>0||xp>0){
       if(!window.confirm('"'+v+'" ka purana progress mila: '+lv+' levels, '+xp+' XP.\n\nOK = ye main hi hu, progress continue karo.\nCancel = ye mera progress nahi hai (alag naam likho, jaise Sapna V.).')){ btn.disabled=false; btn.textContent='Start Playing ▶'; return; }
-      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{}},best.meta||{},{settings:meta.settings});
-      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{};
+      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{}},best.meta||{},{settings:meta.settings});
+      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{};
       saveProgress(); saveMeta();
     }
   }
