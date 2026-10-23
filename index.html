@@ -167,6 +167,52 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 .lmis{margin:8px 0; padding-bottom:6px; border-bottom:1px dashed var(--line);} .lmis:last-child{border-bottom:none;}
 .lx{color:var(--badink); background:var(--badbg); border-radius:8px; padding:4px 8px; margin-bottom:4px;}
 .lok{color:var(--goodink); background:var(--goodbg); border-radius:8px; padding:4px 8px; margin-bottom:4px;}
+
+/* ===== Level path map ===== */
+.pathwrap{position:relative; margin:6px 0 12px;}
+.pathsvg{position:absolute; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:0;}
+.pathsvg path{fill:none; stroke:var(--line); stroke-width:4; stroke-dasharray:7 7; stroke-linecap:round; vector-effect:non-scaling-stroke;}
+.pathsvg path.done{stroke:var(--good); stroke-dasharray:none; stroke-width:5;}
+.pnode{position:absolute; width:64px; transform:translateX(-50%); text-align:center; cursor:pointer; z-index:2; -webkit-tap-highlight-color:transparent;}
+.pnode:active .pcirc{transform:scale(.92);}
+.pcirc{width:52px; height:52px; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.95rem;
+  color:var(--accent); background:var(--card); border:3px solid var(--accent); box-shadow:0 3px 0 rgba(0,0,0,.16); transition:transform .12s ease;}
+.pnode.done .pcirc{background:var(--good); border-color:var(--good); color:#fff; font-size:1.2rem;}
+.pnode.next .pcirc{background:var(--accent); color:#fff; animation:pathpulse 1.6s ease-out infinite;}
+.pnode.boss .pcirc{width:58px; height:58px; font-size:1.6rem; background:var(--card); border-style:dashed;}
+.pnode.boss.locked{opacity:.5; cursor:not-allowed;}
+.pstars{font-size:.7rem; color:var(--accent); line-height:1.1; margin-top:3px; letter-spacing:1px;}
+.plabel{position:absolute; max-width:40%; font-size:.8rem; font-weight:700; line-height:1.25; z-index:1; cursor:pointer;}
+.plabel small{display:block; font-weight:500; color:var(--sub); font-size:.7rem;}
+@keyframes pathpulse{0%{box-shadow:0 3px 0 rgba(0,0,0,.16),0 0 0 0 rgba(224,138,79,.65);}70%{box-shadow:0 3px 0 rgba(0,0,0,.16),0 0 0 16px rgba(224,138,79,0);}100%{box-shadow:0 3px 0 rgba(0,0,0,.16),0 0 0 0 rgba(224,138,79,0);}}
+
+/* ===== Win animation ===== */
+.starburst{font-size:2.7rem; letter-spacing:6px; margin:2px 0 8px; line-height:1.1;}
+.starburst span{display:inline-block; opacity:0; animation:starpop .6s cubic-bezier(.2,1.6,.4,1) forwards;}
+.starburst .on{color:#f2b632; text-shadow:0 2px 12px rgba(242,182,50,.55);}
+.starburst .off{color:var(--line);}
+@keyframes starpop{0%{transform:scale(0) rotate(-45deg); opacity:0;}100%{transform:scale(1) rotate(0); opacity:1;}}
+#result-emoji.pop{animation:emopop .7s cubic-bezier(.2,1.6,.4,1);}
+@keyframes emopop{0%{transform:scale(.2) rotate(-25deg); opacity:0;}100%{transform:scale(1) rotate(0); opacity:1;}}
+@media (prefers-reduced-motion: reduce){ .starburst span{animation:none; opacity:1;} #result-emoji.pop{animation:none;} .pnode.next .pcirc{animation:none;} .bnew .bitem{animation:none;} }
+
+/* ===== Badges ===== */
+.bstrip{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; background:var(--card); border:1px solid var(--line); border-radius:12px;
+  padding:9px 12px; margin:10px 0; color:var(--ink); cursor:pointer; font-size:.85rem; font-weight:600; text-align:left;}
+.bstrip .bicons{font-size:1.15rem; letter-spacing:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;}
+.bstrip .bmore{color:var(--accent); white-space:nowrap;}
+.bgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:8px 0;}
+.bdg{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:10px 6px; text-align:center;}
+.bdg .bic{font-size:2rem; line-height:1.1;}
+.bdg .bnm{font-weight:700; font-size:.78rem; margin-top:4px;}
+.bdg .bds{font-size:.68rem; color:var(--sub); margin-top:2px; line-height:1.25;}
+.bdg.off{opacity:.45; filter:grayscale(1);}
+.bnew{background:linear-gradient(135deg,#c9622b,#7a2f10); color:#fff; border-radius:14px; padding:10px 12px; margin:8px 0; text-align:left;}
+.bnew .bhead{font-weight:800; font-size:.9rem; margin-bottom:6px;}
+.bnew .bitem{display:flex; align-items:center; gap:10px; padding:4px 0; animation:badgein .5s cubic-bezier(.2,1.5,.4,1) both;}
+.bnew .bitem .bic{font-size:1.8rem;}
+.bnew .bitem small{display:block; opacity:.85; font-size:.72rem;}
+@keyframes badgein{0%{transform:translateX(-24px) scale(.8); opacity:0;}100%{transform:none; opacity:1;}}
 .certimg{width:100%; max-width:640px; border-radius:10px; border:1px solid var(--line); margin:10px auto; display:block;}
 .certbanner{background:linear-gradient(135deg,#c9622b,#7a2f10); color:#fff; padding:10px 14px; border-radius:12px; font-weight:700; margin:8px 0;}
 .gain{display:inline-block; background:var(--goodbg); color:var(--goodink); padding:4px 12px; border-radius:20px; font-weight:700; font-size:.85rem; margin-bottom:8px;}
@@ -223,7 +269,10 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
       <button class="tg" id="tg-sound"></button>
       <button class="tg" id="tg-voice"></button>
       <button class="tg" id="tg-hindi"></button>
+      <button class="tg" id="tg-view"></button>
     </div>
+
+    <button class="bstrip" id="btn-badges"></button>
 
     <div id="continue-wrap"></div>
 
@@ -4977,8 +5026,8 @@ function uniq(a){return a.filter((x,i)=>a.indexOf(x)===i);}
 const K_PROG='fea_quest_progress', K_META='fea_quest_meta';
 let progress=load(K_PROG,{});
 let meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:{}},load(K_META,{}));
-meta.settings=Object.assign({sound:true,voice:true,hindi:true},meta.settings||{});
-meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{};
+meta.settings=Object.assign({sound:true,voice:true,hindi:true,view:'path'},meta.settings||{});
+meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0;
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
@@ -4989,9 +5038,9 @@ let studentName=load(K_NAME,'');
 const K_PROFILES='fea_quest_profiles', K_CONF='fea_quest_confirmed';
 function cleanName(n){ return String(n||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|\s)(\S)/g,function(m,sp,ch){ return sp+ch.toUpperCase(); }); }
 function nameKey(n){ return cleanName(n).toLowerCase(); }
-function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},settings:meta.settings}; }
+function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0,settings:meta.settings}; }
 function backupData(){
-  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,stats:meta.stats,mistakes:(meta.mistakes||[]).slice(-60)};
+  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,stats:meta.stats,badges:meta.badges,speakPass:meta.speakPass,mistakes:(meta.mistakes||[]).slice(-60)};
   let b={progress:progress,meta:m};
   try{ if(JSON.stringify(b).length>45000){ m.mistakes=[]; } if(JSON.stringify(b).length>45000){ m.open={}; } }catch(e){}
   return b;
@@ -5142,6 +5191,7 @@ function renderToggles(){
   const s=meta.settings;
   const set=(id,on,label)=>{const b=$(id); b.textContent=label+': '+(on?'ON':'OFF'); b.classList.toggle('off',!on);};
   set('tg-sound',s.sound,'🔊 Sound'); set('tg-voice',s.voice,'🗣 Voice'); set('tg-hindi',s.hindi,'🇮🇳 Hindi hint');
+  $('tg-view').textContent='🗺 Map: '+(s.view==='list'?'List':'Path');
 }
 function renderMap(){
   $('whoami').textContent='👤 '+(studentName||'');
@@ -5153,7 +5203,7 @@ function renderMap(){
   else { $('rank-fill').style.width='100%'; $('rank-text').textContent='Top rank reached! 👑'; }
   renderToggles();
   $('btn-mistakes').textContent='📓 Mistakes ('+meta.mistakes.length+')';
-  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')';
+  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')'; renderBadgeStrip();
 
   const nxt=nextLevel(), cw=$('continue-wrap'); cw.innerHTML='';
   const c=document.createElement('div'); c.className='continue';
@@ -5162,6 +5212,42 @@ function renderMap(){
   cw.appendChild(c);
   renderSections();
 }
+
+/* ================= LEVEL PATH MAP ================= */
+const PATH_ROW=80, PATH_X=[[50,'r'],[76,'l'],[50,'r'],[24,'r']];
+function shortLabel(t){ const p=String(t).split('·').map(x=>x.trim()).filter(Boolean); return p.length>1?{main:p[p.length-1],sub:p.slice(0,-1).join(' · ')}:{main:String(t),sub:''}; }
+function buildPath(lv,k,nxt,bossOk,need,cleared){
+  const n=lv.length+1, wrap=document.createElement('div'); wrap.className='pathwrap'; wrap.style.height=(n*PATH_ROW)+'px';
+  const NS='http://www.w3.org/2000/svg'; const svg=document.createElementNS(NS,'svg'); svg.setAttribute('class','pathsvg');
+  svg.setAttribute('viewBox','0 0 100 '+(n*PATH_ROW)); svg.setAttribute('preserveAspectRatio','none');
+  const cy=i=>i*PATH_ROW+27, cx=i=>PATH_X[i%4][0];
+  for(let i=0;i<n-1;i++){
+    const pa=document.createElementNS(NS,'path'); const x0=cx(i),y0=cy(i),x1=cx(i+1),y1=cy(i+1),m=(y1-y0)/2;
+    pa.setAttribute('d','M'+x0+','+y0+' C'+x0+','+(y0+m)+' '+x1+','+(y1-m)+' '+x1+','+y1);
+    if(progress[lv[i].id]) pa.setAttribute('class','done'); svg.appendChild(pa);
+  }
+  wrap.appendChild(svg);
+  const addLabel=(i,main,sub,onclick)=>{
+    const lab=document.createElement('div'); lab.className='plabel'; lab.style.top=(i*PATH_ROW+6)+'px';
+    const x=cx(i), right=PATH_X[i%4][1]==='r';
+    if(right){ lab.style.left='calc('+x+'% + 38px)'; lab.style.textAlign='left'; } else { lab.style.right='calc('+(100-x)+'% + 38px)'; lab.style.textAlign='right'; }
+    lab.innerHTML=esc(main)+(sub?'<small>'+esc(sub)+'</small>':''); if(onclick) lab.onclick=onclick; wrap.appendChild(lab);
+  };
+  lv.forEach((l,i)=>{
+    const pr=progress[l.id], isNext=!!(nxt&&nxt.id===l.id);
+    const nd=document.createElement('div'); nd.className='pnode'+(pr?' done':'')+(isNext?' next':''); nd.style.left=cx(i)+'%'; nd.style.top=(i*PATH_ROW)+'px';
+    nd.setAttribute('role','button'); nd.setAttribute('tabindex','0'); nd.setAttribute('aria-label',l.title);
+    nd.innerHTML='<div class="pcirc">'+(pr?'✓':(isNext?'▶':(l._idx+1)))+'</div><div class="pstars">'+(pr?'★'.repeat(pr.stars)+'☆'.repeat(3-pr.stars):'☆☆☆')+'</div>';
+    const go=()=>startLevel(l.id); nd.onclick=go; nd.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } };
+    wrap.appendChild(nd); const t=shortLabel(l.title); addLabel(i,t.main,t.sub||l.topic,go);
+  });
+  const bi=n-1, bn=document.createElement('div'); bn.className='pnode boss'+(bossOk?'':' locked'); bn.style.left=cx(bi)+'%'; bn.style.top=(bi*PATH_ROW)+'px';
+  bn.innerHTML='<div class="pcirc">👹</div><div class="pstars">'+(meta.bosses[k]?'🏅':'')+'</div>';
+  const goB=bossOk?()=>startBoss(k):null; if(goB) bn.onclick=goB; wrap.appendChild(bn);
+  addLabel(bi,'Boss Challenge',bossOk?'10 mixed questions · 70% to pass':'Clear '+(need-cleared)+' more level(s) to unlock',goB);
+  return wrap;
+}
+
 function renderSections(){
   const box=$('sections'); box.innerHTML='';
   const q=$('search').value.trim().toLowerCase();
@@ -5181,9 +5267,10 @@ function renderSections(){
     head.onclick=()=>{meta.open[k]=!open; saveMeta(); renderSections();};
     box.appendChild(head);
     if(!open) return;
+    const need=Math.min(3,lv.length), ok=cleared>=need;
+    if(meta.settings.view!=='list'){ box.appendChild(buildPath(lv,k,nxt,ok,need,cleared)); return; }
     const list=document.createElement('div'); list.className='levels';
     lv.forEach(l=>list.appendChild(levelCard(l)));
-    const need=Math.min(3,lv.length), ok=cleared>=need;
     const b=document.createElement('div'); b.className='level-card boss'+(ok?'':' locked');
     b.innerHTML='<div class="level-num" style="background:var(--accent-dark)">👹</div><div class="level-info"><div class="level-title">Boss Challenge</div>'+
       '<div class="level-sub">'+(ok?'10 mixed questions · pass with 70%':'Clear '+(need-cleared)+' more level(s) to unlock')+'</div></div>'+
@@ -5353,12 +5440,86 @@ function finishAnswer(correct,correctText){
 }
 function nextItem(){ if(S.i<S.items.length-1){S.i++; renderItem();} else finishSession(); }
 
+
+/* ================= WIN ANIMATION ================= */
+function reducedMotion(){ try{ return !!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){ return false; } }
+function confetti(n){
+  try{
+    if(!n||reducedMotion()) return;
+    const old=document.getElementById('confetti'); if(old) old.remove();
+    const c=document.createElement('canvas'); c.id='confetti'; c.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:998';
+    const W=c.width=window.innerWidth||360, H=c.height=window.innerHeight||640; document.body.appendChild(c);
+    const g=c.getContext&&c.getContext('2d'); if(!g){ c.remove(); return; }
+    const cols=['#f2b632','#e08a4f','#c9622b','#5fbf83','#6fb7ff','#e57fb0','#ffffff'];
+    const ps=[]; for(let i=0;i<n;i++) ps.push({x:W/2+(Math.random()-.5)*W*.35,y:H*.32,vx:(Math.random()-.5)*11,vy:-Math.random()*12-4,w:6+Math.random()*6,h:8+Math.random()*9,r:Math.random()*6.28,vr:(Math.random()-.5)*.35,c:cols[i%cols.length]});
+    let t0=null; const DUR=2800;
+    function step(ts){
+      if(t0===null) t0=ts; const el=ts-t0; g.clearRect(0,0,W,H);
+      ps.forEach(q=>{ q.vy+=.3; q.x+=q.vx; q.y+=q.vy; q.vx*=.992; q.r+=q.vr; g.save(); g.translate(q.x,q.y); g.rotate(q.r); g.globalAlpha=Math.max(0,1-el/DUR); g.fillStyle=q.c; g.fillRect(-q.w/2,-q.h/2,q.w,q.h); g.restore(); });
+      if(el<DUR) requestAnimationFrame(step); else c.remove();
+    }
+    requestAnimationFrame(step);
+  }catch(e){}
+}
+function countUp(el,to,ms){
+  try{
+    if(!el) return; const pre=el.getAttribute('data-pre')||'+'; if(reducedMotion()||!to){ el.textContent=pre+to; return; }
+    let t0=null; el.textContent=pre+'0';
+    (function step(ts){ if(t0===null) t0=ts; const f=Math.min(1,(ts-t0)/ms), e=1-Math.pow(1-f,3); el.textContent=pre+Math.round(to*e); if(f<1) requestAnimationFrame(step); else el.textContent=pre+to; })(performance.now?performance.now():0);
+  }catch(e){}
+}
+function winFx(fx){
+  try{
+    const em=$('result-emoji'); em.classList.remove('pop'); void em.offsetWidth; em.classList.add('pop');
+    const st=fx.stars||0; confetti(st>=3?140:st===2?80:st===1?40:0);
+    document.querySelectorAll('#result-extra .xpnum').forEach(el=>countUp(el,Number(el.getAttribute('data-to'))||0,800));
+  }catch(e){}
+}
+function starsHtml(stars){ return '<div class="starburst" aria-label="'+stars+' of 3 stars">'+[1,2,3].map(i=>'<span class="'+(i<=stars?'on':'off')+'" style="animation-delay:'+(0.2+i*0.28)+'s">'+(i<=stars?'★':'☆')+'</span>').join('')+'</div>'; }
+
+/* ================= BADGES ================= */
+const BADGES=[
+ {id:'first',   icon:'🌱', name:'Pehla Kadam',        desc:'Pehla level pass karo',            ok:()=>passedCount()>=1},
+ {id:'lv10',    icon:'🔟', name:'10 Levels Club',      desc:'10 levels pass karo',              ok:()=>passedCount()>=10},
+ {id:'lv25',    icon:'🚀', name:'25 Levels Rocket',    desc:'25 levels pass karo',              ok:()=>passedCount()>=25},
+ {id:'lv50',    icon:'🏆', name:'50 Levels Champion',  desc:'50 levels pass karo',              ok:()=>passedCount()>=50},
+ {id:'perfect', icon:'⭐', name:'Perfect Score',       desc:'Kisi level me 3 ⭐ lo',            ok:()=>Object.values(progress).some(p=>(p.stars||0)>=3)},
+ {id:'perfect5',icon:'🌟', name:'5 Perfect Levels',    desc:'5 levels me 3 ⭐ lo',              ok:()=>Object.values(progress).filter(p=>(p.stars||0)>=3).length>=5},
+ {id:'streak3', icon:'🔥', name:'3 Din Lagatar',       desc:'Lagatar 3 din khelo',              ok:()=>shownStreak()>=3},
+ {id:'streak7', icon:'⚡', name:'7 Din Lagatar',       desc:'Lagatar 7 din khelo',              ok:()=>shownStreak()>=7},
+ {id:'speaker', icon:'🎤', name:'Speaking Star',       desc:'Ek Speaking round pass karo',      ok:()=>(meta.speakPass||0)>=1},
+ {id:'boss',    icon:'👹', name:'Boss Slayer',         desc:'Koi Boss Challenge jeeto',         ok:()=>Object.keys(meta.bosses||{}).some(k=>meta.bosses[k])},
+ {id:'lesson',  icon:'📖', name:'Grammar Learner',     desc:'Ek Grammar Lesson complete karo',  ok:()=>lessonsDoneCount()>=1},
+ {id:'lesson10',icon:'🎓', name:'Grammar Master',      desc:'10 Grammar Lessons complete karo', ok:()=>lessonsDoneCount()>=10},
+ {id:'cert',    icon:'📜', name:'Certificate Holder',  desc:'Pehla certificate pao',            ok:()=>Object.keys(meta.certs||{}).length>=1},
+ {id:'xp1000',  icon:'💎', name:'1000 XP',             desc:'1000 XP kamao',                    ok:()=>(meta.xp||0)>=1000}
+];
+function checkBadges(){
+  if(!meta.badges) meta.badges={}; const fresh=[];
+  BADGES.forEach(b=>{ let ok=false; try{ ok=!!b.ok(); }catch(e){} if(ok&&!meta.badges[b.id]){ meta.badges[b.id]=dayStr(new Date()); fresh.push(b.id); } });
+  if(fresh.length) saveMeta(); return fresh;
+}
+function badgeBanner(ids){
+  if(!ids||!ids.length) return '';
+  return '<div class="bnew"><div class="bhead">🏅 Naya badge'+(ids.length>1?'s':'')+' mila!</div>'+ids.map((id,i)=>{ const b=BADGES.find(x=>x.id===id); return '<div class="bitem" style="animation-delay:'+(0.6+i*0.25)+'s"><span class="bic">'+b.icon+'</span><span><b>'+esc(b.name)+'</b><small>'+esc(b.desc)+'</small></span></div>'; }).join('')+'</div>';
+}
+function renderBadgeStrip(){
+  const got=BADGES.filter(b=>meta.badges&&meta.badges[b.id]);
+  $('btn-badges').innerHTML='<span class="bicons">'+(got.length?got.map(b=>b.icon).join(' '):'🏅 Badges jeeto')+'</span><span class="bmore">'+got.length+'/'+BADGES.length+' ›</span>';
+}
+function showBadges(){
+  checkBadges(); const got=BADGES.filter(b=>meta.badges[b.id]).length;
+  const grid='<div class="bgrid">'+BADGES.map(b=>{ const on=!!meta.badges[b.id]; return '<div class="bdg'+(on?'':' off')+'"><div class="bic">'+(on?b.icon:'🔒')+'</div><div class="bnm">'+esc(b.name)+'</div><div class="bds">'+esc(b.desc)+'</div></div>'; }).join('')+'</div>';
+  showResult({emoji:'🏅',score:got+' / '+BADGES.length,msg:'Aapke badges',extra:grid,buttons:[{label:'Back to Levels',cls:'primary',fn:goToMap}]});
+}
+
 /* ================= RESULTS ================= */
 function showResult(o){
   show('result');
   $('result-emoji').textContent=o.emoji; $('result-score').textContent=o.score; $('result-msg').textContent=o.msg;
   const ex=$('result-extra'); ex.innerHTML=o.extra||'';
   const bt=$('result-btns'); bt.innerHTML='';
+  if(o.fx) winFx(o.fx);
   (o.buttons||[]).forEach(b=>{
     if(b.href){ const a=document.createElement('a'); a.className='btn '+(b.cls||''); a.textContent=b.label; a.href=b.href; a.target='_blank'; a.rel='noopener';
       if(b.download) a.download=b.download; bt.appendChild(a); }
@@ -5714,9 +5875,9 @@ function finishSession(){
     touchStreak();
     const msg=stars===3?'Perfect! Aapne sab sahi kiya.':stars===2?'Bahut achha! Thoda aur practice karo full stars ke liye.':stars===1?'Achhi shuruaat! Dobara try karke stars badhao.':'Koi baat nahi, dobara try karo!';
     const info={title:l.title,score,total,stars}; const url=makeCard(info);
-    const gain='<div class="gain">+'+S.xp+' XP'+(bonus?' (incl. '+bonus+' bonus)':'')+'</div>';
+    const gain='<div class="gain"><span class="xpnum" data-to="'+S.xp+'">+'+S.xp+'</span> XP'+(bonus?' (incl. '+bonus+' bonus)':'')+'</div>';
     const nxt=LEVELS[l._idx+1]; const speakable=uniq(l.questions.filter(eligibleSentence).map(q=>q.opts[q.a])).length>=2;
-    const buttons=[]; const newC=checkCerts().concat(checkLessonCerts()); let certExtra='', certBtns=[];
+    const buttons=[]; const newC=checkCerts().concat(checkLessonCerts()); let certExtra='', certBtns=[]; const badgeExtra=badgeBanner(checkBadges());
     if(newC.length){ const n=newC[newC.length-1]; const cu=makeCert(meta.certs[n]);
       if(cu){ certExtra='<div class="certbanner">🎓 Congratulations! Certificate unlocked — '+meta.certs[n].levels+' '+certUnit(meta.certs[n])+' completed</div><img class="certimg" alt="Certificate" src="'+cu+'">'; certBtns=certButtons(n,cu); } }
     if(nxt) buttons.push({label:'Next level ▶',cls:'primary',fn:()=>{ LESSON_RET=-1; startLevel(nxt.id); }});
@@ -5726,17 +5887,17 @@ function finishSession(){
              buttons.push({label:'⬇ Save card',href:url,download:'my-score-card.png'}); }
     certBtns.slice().reverse().forEach(b=>buttons.unshift(b));
     buttons.push(LESSON_RET>=0?{label:'📖 Back to Lesson',cls:'primary',fn:backToLesson}:{label:'Back to Levels',fn:goToMap});
-    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:certExtra+gain+cardHtml(url),buttons});
+    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:badgeExtra+certExtra+starsHtml(stars)+gain+cardHtml(url),buttons,fx:{stars}});
   } else if(mode==='boss'){
     const pass=score/total>=0.7; let extra='<div class="gain">+'+S.xp+' XP</div>';
     if(pass&&!meta.bosses[S.section]){ meta.bosses[S.section]=true; addXP(50); extra='<div class="gain">+'+S.xp+' XP · Boss badge 🏅</div>'; saveMeta(); }
-    touchStreak();
-    showResult({emoji:pass?'🏅':'💪',score:score+' / '+total,msg:pass?'Boss defeated! Zabardast!':'Boss abhi jeeta nahi — 70% chahiye. Dobara try karo!',extra,
+    touchStreak(); extra=badgeBanner(checkBadges())+extra;
+    showResult({emoji:pass?'🏅':'💪',score:score+' / '+total,msg:pass?'Boss defeated! Zabardast!':'Boss abhi jeeta nahi — 70% chahiye. Dobara try karo!',extra,fx:{stars:pass?3:0},
       buttons:[{label:'Try again',cls:'primary',fn:()=>startBoss(S.section)},{label:'Back to Levels',fn:goToMap}]});
   } else {
     touchStreak();
     const msg=mode==='mistakes'?('Mistakes notebook mein ab '+meta.mistakes.length+' sawal bache hain.'):'Revision complete!';
-    showResult({emoji:score/total>=0.7?'🎉':'💪',score:score+' / '+total,msg,extra:'<div class="gain">+'+S.xp+' XP</div>',
+    showResult({emoji:score/total>=0.7?'🎉':'💪',score:score+' / '+total,msg,extra:badgeBanner(checkBadges())+'<div class="gain">+'+S.xp+' XP</div>',fx:{stars:score/total>=0.7?2:0},
       buttons:[{label:mode==='mistakes'?'📓 Practise again':'🔁 Another round',cls:'primary',fn:mode==='mistakes'?startMistakes:startRevision},{label:'Back to Levels',fn:goToMap}]});
   }
   syncToSheet();
@@ -5795,8 +5956,8 @@ function onMic(){
 function nextSpeak(){
   if(SP.i<SP.list.length-1){SP.i++; renderSpeak();}
   else {
-    const l=LEVEL_BY_ID[SP.lid];
-    showResult({emoji:SP.pass>=Math.ceil(SP.list.length/2)?'🎤':'💪',score:SP.pass+' / '+SP.list.length,msg:'Speaking round complete!',extra:'<div class="gain">+'+SP.xp+' XP</div>',
+    const l=LEVEL_BY_ID[SP.lid]; const spOk=SP.pass>=Math.ceil(SP.list.length/2); if(spOk){ meta.speakPass=(meta.speakPass||0)+1; saveMeta(); }
+    showResult({emoji:spOk?'🎤':'💪',score:SP.pass+' / '+SP.list.length,msg:'Speaking round complete!',extra:badgeBanner(checkBadges())+'<div class="gain">+'+SP.xp+' XP</div>',fx:{stars:spOk?2:0},
       buttons:[{label:'Play level again',cls:'primary',fn:()=>startLevel(l.id)},{label:'Back to Levels',fn:goToMap}]});
     syncToSheet();
   }
@@ -5809,6 +5970,8 @@ $('speak-listen').onclick=()=>{ if(SP) speak(SP.list[SP.i],0.9); };
 $('speak-mic').onclick=onMic; $('speak-next').onclick=nextSpeak;
 /* App look: service worker (shortcut icon / app mode) */
 try{ if('serviceWorker' in navigator && /^https:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
+$('tg-view').onclick=()=>{ meta.settings.view=(meta.settings.view==='list')?'path':'list'; saveMeta(); renderToggles(); renderSections(); };
+$('btn-badges').onclick=showBadges;
 $('btn-certs').onclick=showCerts; $('btn-lessons').onclick=showLessons;
 $('lesson-search').oninput=()=>renderLessonList($('lesson-search').value);
 $('lesson-back').onclick=()=>{ if(!$('lesson-view').classList.contains('hidden')){ $('lesson-view').classList.add('hidden'); $('lesson-list-wrap').classList.remove('hidden'); try{window.scrollTo(0,0);}catch(e){} } else goToMap(); }; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
@@ -5843,8 +6006,8 @@ async function submitName(){
     const lv=Object.keys(best.progress||{}).length, xp=(best.meta&&best.meta.xp)||0;
     if(lv>0||xp>0){
       if(!window.confirm('"'+v+'" ka purana progress mila: '+lv+' levels, '+xp+' XP.\n\nOK = ye main hi hu, progress continue karo.\nCancel = ye mera progress nahi hai (alag naam likho, jaise Sapna V.).')){ btn.disabled=false; btn.textContent='Start Playing ▶'; return; }
-      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{}},best.meta||{},{settings:meta.settings});
-      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{};
+      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0},best.meta||{},{settings:meta.settings});
+      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0;
       saveProgress(); saveMeta();
     }
   }
