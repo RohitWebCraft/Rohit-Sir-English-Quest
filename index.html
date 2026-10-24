@@ -197,6 +197,9 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 @media (prefers-reduced-motion: reduce){ .starburst span{animation:none; opacity:1;} #result-emoji.pop{animation:none;} .pnode.next .pcirc{animation:none;} .bnew .bitem{animation:none;} }
 
 /* ===== Badges ===== */
+.combo{display:inline-block; margin-left:6px; padding:2px 9px; border-radius:99px; background:#f2b632; color:#3a2000; font-weight:800; font-size:.85em; animation:starpop .4s cubic-bezier(.2,1.6,.4,1);}
+.combo.lost{background:#e4dbd0; color:#6b5b4b;}
+.tmlow{color:#d63a2a !important;}
 .bstrip{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; background:var(--card); border:1px solid var(--line); border-radius:12px;
   padding:9px 12px; margin:10px 0; color:var(--ink); cursor:pointer; font-size:.85rem; font-weight:600; text-align:left;}
 .bstrip .bicons{font-size:1.15rem; letter-spacing:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;}
@@ -276,6 +279,10 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
 
     <div id="continue-wrap"></div>
 
+    <div class="actions">
+      <button class="btn" id="btn-daily">🎯 Daily Challenge</button>
+      <button class="btn" id="btn-timer">⏱ Timer Round</button>
+    </div>
     <div class="actions">
       <button class="btn primary" id="btn-lessons" style="padding:20px 14px; font-size:1.2rem; font-weight:800;">📖 Grammar Lessons (27 topics)</button>
     </div>
@@ -5027,7 +5034,7 @@ const K_PROG='fea_quest_progress', K_META='fea_quest_meta';
 let progress=load(K_PROG,{});
 let meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},settings:{}},load(K_META,{}));
 meta.settings=Object.assign({sound:true,voice:true,hindi:true,view:'path'},meta.settings||{});
-meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0;
+meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0; meta.daily=meta.daily||{}; meta.bestCombo=meta.bestCombo||0; meta.timerBest=meta.timerBest||0;
 function saveProgress(){save(K_PROG,progress);}
 function saveMeta(){save(K_META,meta);}
 
@@ -5038,9 +5045,9 @@ let studentName=load(K_NAME,'');
 const K_PROFILES='fea_quest_profiles', K_CONF='fea_quest_confirmed';
 function cleanName(n){ return String(n||'').trim().replace(/\s+/g,' ').toLowerCase().replace(/(^|\s)(\S)/g,function(m,sp,ch){ return sp+ch.toUpperCase(); }); }
 function nameKey(n){ return cleanName(n).toLowerCase(); }
-function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0,settings:meta.settings}; }
+function freshMeta(){ return {xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0,daily:{},bestCombo:0,timerBest:0,settings:meta.settings}; }
 function backupData(){
-  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,stats:meta.stats,badges:meta.badges,speakPass:meta.speakPass,mistakes:(meta.mistakes||[]).slice(-60)};
+  const m={xp:meta.xp,streak:meta.streak,lastDay:meta.lastDay,bosses:meta.bosses,open:meta.open,certs:meta.certs,lread:meta.lread,stats:meta.stats,badges:meta.badges,speakPass:meta.speakPass,daily:meta.daily,bestCombo:meta.bestCombo,timerBest:meta.timerBest,mistakes:(meta.mistakes||[]).slice(-60)};
   let b={progress:progress,meta:m};
   try{ if(JSON.stringify(b).length>45000){ m.mistakes=[]; } if(JSON.stringify(b).length>45000){ m.open={}; } }catch(e){}
   return b;
@@ -5170,6 +5177,7 @@ function celebrate(isCorrect){
 
 /* ================= NAVIGATION ================= */
 function show(name){
+  if(name!=='quiz') timerStop();
   ['name','map','lessons','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
   try{window.scrollTo(0,0);}catch(e){}
   if(name==='map') renderMap();
@@ -5203,6 +5211,7 @@ function renderMap(){
   else { $('rank-fill').style.width='100%'; $('rank-text').textContent='Top rank reached! 👑'; }
   renderToggles();
   $('btn-mistakes').textContent='📓 Mistakes ('+meta.mistakes.length+')';
+  $('btn-daily').textContent=meta.daily&&meta.daily[dayStr(new Date())]!==undefined?'🎯 Daily Challenge ✅':'🎯 Daily Challenge +30 XP'; $('btn-timer').textContent='⏱ Timer Round'+(meta.timerBest?' (best '+meta.timerBest+')':'');
   $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')'; renderBadgeStrip();
 
   const nxt=nextLevel(), cw=$('continue-wrap'); cw.innerHTML='';
@@ -5318,7 +5327,7 @@ let S=null, answered=false, CUR=null;
 function itemsForLevel(l){return l.questions.map((q,qi)=>({lid:l.id,qi,q}));}
 function itemsFromLevels(levels){const a=[]; levels.forEach(l=>a.push.apply(a,itemsForLevel(l))); return a;}
 function startSession(cfg){
-  S={mode:cfg.mode,title:cfg.title,items:cfg.items,i:0,score:0,xp:0,levelId:cfg.levelId||null,section:cfg.section||null};
+  S={mode:cfg.mode,title:cfg.title,items:cfg.items,i:0,score:0,xp:0,combo:0,bestCombo:0,day:dayStr(new Date()),levelId:cfg.levelId||null,section:cfg.section||null};
   touchStreak(); show('quiz'); $('quiz-back').textContent=(LESSON_RET>=0&&cfg.mode==='level')?'← Lesson':'← Levels'; $('quiz-title').textContent=cfg.title; renderItem();
 }
 function startLevel(id){ const l=LEVEL_BY_ID[id]; startSession({mode:'level',title:l.title,items:itemsForLevel(l),levelId:id}); }
@@ -5336,17 +5345,38 @@ function startMistakes(){
   if(!items.length){ showToast('No mistakes saved 🎉',''); return; }
   startSession({mode:'mistakes',title:'📓 Mistakes Notebook',items:shuffle(items).slice(0,15)});
 }
+/* ---- Daily Challenge: har din ke 10 sawal, sab students ke liye same ---- */
+function seededRng(seed){ let a=0; for(let i=0;i<seed.length;i++) a=(a*31+seed.charCodeAt(i))>>>0;
+  return function(){ a=(a+0x6D2B79F5)>>>0; let t=a; t=Math.imul(t^(t>>>15),t|1); t^=t+Math.imul(t^(t>>>7),t|61); return ((t^(t>>>14))>>>0)/4294967296; }; }
+function dailyItems(day){ const a=itemsFromLevels(LEVELS); const r=seededRng('rsq-'+day); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); const x=a[i]; a[i]=a[j]; a[j]=x; } return a.slice(0,10); }
+function startDaily(){ const day=dayStr(new Date()); startSession({mode:'daily',title:'🎯 Daily Challenge · '+day,items:dailyItems(day)}); }
+/* ---- Timer Round: 60 second me jitne sahi kar sako ---- */
+var TM=null; const TIMER_SECS=60;
+function timerStop(){ if(TM){ try{clearInterval(TM.iv); clearTimeout(TM.adv);}catch(e){} TM=null; } try{ $('quiz-title').classList.remove('tmlow'); }catch(e){} }
+function timerTick(){
+  if(!TM||!S||S.mode!=='timer') return; const left=Math.max(0,TM.end-Date.now());
+  $('progress-fill').style.width=(left/(TIMER_SECS*1000)*100)+'%'; const sec=Math.ceil(left/1000);
+  $('quiz-title').textContent='⏱ '+sec+'s'; $('quiz-title').classList.toggle('tmlow',sec<=10);
+  if(left<=0){ timerStop(); finishSession(); }
+}
+function startTimer(){
+  const done=LEVELS.filter(l=>progress[l.id]); const lv=done.length>=2?done:LEVELS.slice(0,15);
+  startSession({mode:'timer',title:'⏱ '+TIMER_SECS+'s',items:shuffle(itemsFromLevels(lv)).slice(0,80)});
+  timerStop(); TM={end:Date.now()+TIMER_SECS*1000,iv:setInterval(timerTick,200),adv:null}; timerTick();
+}
+function comboBonus(c){ return c>=3?Math.min(c-2,5)*2:0; }
+function comboLine(){ return (S&&S.bestCombo>=2)?'<div class="small">🔥 Best combo: x'+S.bestCombo+'</div>':''; }
 function setBtn(mode,label,disabled){const n=$('next-btn'); n.dataset.mode=mode; n.textContent=label; n.disabled=!!disabled;}
 function nextLabel(){return (S.i===S.items.length-1)?'See Result':'Next';}
 
 function renderItem(){
   answered=false; const it=S.items[S.i], q=it.q;
-  $('progress-fill').style.width=(S.i/S.items.length*100)+'%';
+  if(S.mode!=='timer') $('progress-fill').style.width=(S.i/S.items.length*100)+'%';
   const pill=$('diff-pill'); pill.textContent=q.diff.toUpperCase(); pill.className='diff-pill diff-'+q.diff;
   $('feedback').classList.add('hidden'); $('body').innerHTML='';
   const ctx=$('q-ctx'); ctx.classList.add('hidden');
   $('q-text-hi').textContent=q.qHi; $('q-text-hi').classList.toggle('hidden',!meta.settings.hindi);
-  let type=pickType(q), blank=null;
+  let type=(S.mode==='timer')?'mcq':pickType(q), blank=null;
   if(type==='blank'){ blank=makeBlank(q); if(!blank) type='mcq'; }
   if(type==='mcq'){ $('q-text-en').textContent=q.qEn; renderMCQ(q); }
   else if(type==='build'){ $('q-text-en').textContent='🧩 Arrange the words to make the correct sentence.'; ctx.textContent=q.qEn; ctx.classList.remove('hidden'); renderBuild(q); }
@@ -5430,15 +5460,19 @@ function checkBuild(){
 }
 function finishAnswer(correct,correctText){
   answered=true; const it=S.items[S.i]; const key=it.lid+'|'+it.qi; const was=meta.mistakes.includes(key);
-  if(correct){ S.score++; addXP(10+(was?5:0)); if(was) meta.mistakes=meta.mistakes.filter(k=>k!==key); }
-  else if(!was){ meta.mistakes.push(key); if(meta.mistakes.length>300) meta.mistakes.shift(); }
+  const prevCombo=S.combo||0; let cb=0;
+  if(correct){ S.score++; S.combo=prevCombo+1; if(S.combo>(S.bestCombo||0)) S.bestCombo=S.combo; if(S.combo>(meta.bestCombo||0)) meta.bestCombo=S.combo; cb=comboBonus(S.combo); addXP(10+(was?5:0)+cb); if(was) meta.mistakes=meta.mistakes.filter(k=>k!==key); }
+  else { S.combo=0; if(!was){ meta.mistakes.push(key); if(meta.mistakes.length>300) meta.mistakes.shift(); } }
   if(!meta.stats) meta.stats={}; const stt=meta.stats[it.lid]||(meta.stats[it.lid]={w:0,a:0}); stt.a++; if(!correct) stt.w++;
   saveMeta();
   const phrase=celebrate(correct); const fb=$('feedback');
   fb.textContent=correct?('✅ '+phrase+' — sahi jawab!'):('❌ '+phrase+' — sahi jawab: '+correctText);
+  if(correct&&S.combo>=2){ const sp=document.createElement('span'); sp.className='combo'; sp.textContent='🔥 Combo x'+S.combo+(cb?' · +'+cb+' XP':''); fb.appendChild(sp); }
+  else if(!correct&&prevCombo>=3){ const sp=document.createElement('span'); sp.className='combo lost'; sp.textContent='💔 Combo x'+prevCombo+' toot gaya'; fb.appendChild(sp); }
   fb.classList.remove('hidden'); setBtn('next',nextLabel(),false);
+  if(S.mode==='timer'&&TM){ clearTimeout(TM.adv); TM.adv=setTimeout(()=>{ if(S&&S.mode==='timer'&&TM) nextItem(); },correct?700:1600); }
 }
-function nextItem(){ if(S.i<S.items.length-1){S.i++; renderItem();} else finishSession(); }
+function nextItem(){ if(TM&&TM.adv){ clearTimeout(TM.adv); TM.adv=null; } if(S.i<S.items.length-1){S.i++; renderItem();} else finishSession(); }
 
 
 /* ================= WIN ANIMATION ================= */
@@ -5492,7 +5526,12 @@ const BADGES=[
  {id:'lesson',  icon:'📖', name:'Grammar Learner',     desc:'Ek Grammar Lesson complete karo',  ok:()=>lessonsDoneCount()>=1},
  {id:'lesson10',icon:'🎓', name:'Grammar Master',      desc:'10 Grammar Lessons complete karo', ok:()=>lessonsDoneCount()>=10},
  {id:'cert',    icon:'📜', name:'Certificate Holder',  desc:'Pehla certificate pao',            ok:()=>Object.keys(meta.certs||{}).length>=1},
- {id:'xp1000',  icon:'💎', name:'1000 XP',             desc:'1000 XP kamao',                    ok:()=>(meta.xp||0)>=1000}
+ {id:'xp1000',  icon:'💎', name:'1000 XP',             desc:'1000 XP kamao',                    ok:()=>(meta.xp||0)>=1000},
+ {id:'combo5',  icon:'💥', name:'Combo Star',          desc:'Lagatar 5 sahi jawab do',          ok:()=>(meta.bestCombo||0)>=5},
+ {id:'combo10', icon:'🌋', name:'Combo King',          desc:'Lagatar 10 sahi jawab do',         ok:()=>(meta.bestCombo||0)>=10},
+ {id:'daily1',  icon:'🎯', name:'Daily Hero',          desc:'Pehla Daily Challenge karo',       ok:()=>Object.keys(meta.daily||{}).length>=1},
+ {id:'daily7',  icon:'📅', name:'Daily Champion',      desc:'7 alag din Daily Challenge karo',  ok:()=>Object.keys(meta.daily||{}).length>=7},
+ {id:'timer10', icon:'⏱', name:'Speed Star',          desc:'Timer Round me 10 sahi jawab do',  ok:()=>(meta.timerBest||0)>=10}
 ];
 function checkBadges(){
   if(!meta.badges) meta.badges={}; const fresh=[];
@@ -5867,7 +5906,7 @@ function showCerts(){
 }
 
 function finishSession(){
-  const total=S.items.length, score=S.score, mode=S.mode;
+  timerStop(); const total=S.items.length, score=S.score, mode=S.mode;
   if(mode==='level'){
     const l=LEVEL_BY_ID[S.levelId]; const stars=starsFor(score,total); const prev=progress[l.id];
     let bonus=0;
@@ -5887,17 +5926,30 @@ function finishSession(){
              buttons.push({label:'⬇ Save card',href:url,download:'my-score-card.png'}); }
     certBtns.slice().reverse().forEach(b=>buttons.unshift(b));
     buttons.push(LESSON_RET>=0?{label:'📖 Back to Lesson',cls:'primary',fn:backToLesson}:{label:'Back to Levels',fn:goToMap});
-    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:badgeExtra+certExtra+starsHtml(stars)+gain+cardHtml(url),buttons,fx:{stars}});
+    showResult({emoji:stars===3?'🏆':stars>=1?'🎉':'💪',score:score+' / '+total,msg,extra:badgeExtra+certExtra+starsHtml(stars)+gain+comboLine()+cardHtml(url),buttons,fx:{stars}});
   } else if(mode==='boss'){
     const pass=score/total>=0.7; let extra='<div class="gain">+'+S.xp+' XP</div>';
     if(pass&&!meta.bosses[S.section]){ meta.bosses[S.section]=true; addXP(50); extra='<div class="gain">+'+S.xp+' XP · Boss badge 🏅</div>'; saveMeta(); }
-    touchStreak(); extra=badgeBanner(checkBadges())+extra;
+    touchStreak(); extra=badgeBanner(checkBadges())+extra+comboLine();
     showResult({emoji:pass?'🏅':'💪',score:score+' / '+total,msg:pass?'Boss defeated! Zabardast!':'Boss abhi jeeta nahi — 70% chahiye. Dobara try karo!',extra,fx:{stars:pass?3:0},
       buttons:[{label:'Try again',cls:'primary',fn:()=>startBoss(S.section)},{label:'Back to Levels',fn:goToMap}]});
+  } else if(mode==='daily'){
+    const day=S.day; if(!meta.daily) meta.daily={}; const first=(meta.daily[day]===undefined); let bonus=0;
+    if(first){ bonus=30+(score/total>=0.7?20:0); meta.daily[day]=score; addXP(bonus); const ks=Object.keys(meta.daily).sort(); while(ks.length>60) delete meta.daily[ks.shift()]; }
+    else if(score>meta.daily[day]) meta.daily[day]=score;
+    saveMeta(); touchStreak();
+    const extra=badgeBanner(checkBadges())+'<div class="gain">+'+S.xp+' XP'+(bonus?' (incl. '+bonus+' daily bonus)':'')+'</div>'+comboLine()+(first?'':'<div class="small">Aaj ka bonus pehle mil chuka hai. Kal naya challenge aayega 🌅</div>');
+    showResult({emoji:score/total>=0.7?'🎯':'💪',score:score+' / '+total,msg:first?'Daily Challenge complete!':'Daily Challenge dobara complete!',extra,fx:{stars:score/total>=0.9?3:score/total>=0.6?2:0},
+      buttons:[{label:'🔁 Dobara khelo (no bonus)',fn:startDaily},{label:'Back to Levels',cls:'primary',fn:goToMap}]});
+  } else if(mode==='timer'){
+    const attempted=S.i+(answered?1:0); const nb=score>(meta.timerBest||0); if(nb) meta.timerBest=score; saveMeta(); touchStreak();
+    const extra=badgeBanner(checkBadges())+'<div class="gain">+'+S.xp+' XP</div>'+comboLine()+'<div class="small">'+((nb&&score>0)?'🏆 Naya record!':'Best: '+meta.timerBest+' sahi')+'</div>';
+    showResult({emoji:score>=10?'⚡':score>=5?'🎉':'💪',score:score+' sahi / '+attempted,msg:'Time up! '+TIMER_SECS+' second me '+score+' sahi jawab.',extra,fx:{stars:score>=10?3:score>=5?2:0},
+      buttons:[{label:'⏱ Dobara try karo',cls:'primary',fn:startTimer},{label:'Back to Levels',fn:goToMap}]});
   } else {
     touchStreak();
     const msg=mode==='mistakes'?('Mistakes notebook mein ab '+meta.mistakes.length+' sawal bache hain.'):'Revision complete!';
-    showResult({emoji:score/total>=0.7?'🎉':'💪',score:score+' / '+total,msg,extra:badgeBanner(checkBadges())+'<div class="gain">+'+S.xp+' XP</div>',fx:{stars:score/total>=0.7?2:0},
+    showResult({emoji:score/total>=0.7?'🎉':'💪',score:score+' / '+total,msg,extra:badgeBanner(checkBadges())+'<div class="gain">+'+S.xp+' XP</div>'+comboLine(),fx:{stars:score/total>=0.7?2:0},
       buttons:[{label:mode==='mistakes'?'📓 Practise again':'🔁 Another round',cls:'primary',fn:mode==='mistakes'?startMistakes:startRevision},{label:'Back to Levels',fn:goToMap}]});
   }
   syncToSheet();
@@ -5971,7 +6023,7 @@ $('speak-mic').onclick=onMic; $('speak-next').onclick=nextSpeak;
 /* App look: service worker (shortcut icon / app mode) */
 try{ if('serviceWorker' in navigator && /^https:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
 $('tg-view').onclick=()=>{ meta.settings.view=(meta.settings.view==='list')?'path':'list'; saveMeta(); renderToggles(); renderSections(); };
-$('btn-badges').onclick=showBadges;
+$('btn-badges').onclick=showBadges; $('btn-daily').onclick=startDaily; $('btn-timer').onclick=startTimer;
 $('btn-certs').onclick=showCerts; $('btn-lessons').onclick=showLessons;
 $('lesson-search').oninput=()=>renderLessonList($('lesson-search').value);
 $('lesson-back').onclick=()=>{ if(!$('lesson-view').classList.contains('hidden')){ $('lesson-view').classList.add('hidden'); $('lesson-list-wrap').classList.remove('hidden'); try{window.scrollTo(0,0);}catch(e){} } else goToMap(); }; $('btn-mistakes').onclick=startMistakes; $('btn-revision').onclick=startRevision;
@@ -6006,8 +6058,8 @@ async function submitName(){
     const lv=Object.keys(best.progress||{}).length, xp=(best.meta&&best.meta.xp)||0;
     if(lv>0||xp>0){
       if(!window.confirm('"'+v+'" ka purana progress mila: '+lv+' levels, '+xp+' XP.\n\nOK = ye main hi hu, progress continue karo.\nCancel = ye mera progress nahi hai (alag naam likho, jaise Sapna V.).')){ btn.disabled=false; btn.textContent='Start Playing ▶'; return; }
-      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0},best.meta||{},{settings:meta.settings});
-      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0;
+      progress=best.progress||{}; meta=Object.assign({xp:0,streak:0,lastDay:'',mistakes:[],bosses:{},open:{},certs:{},lread:{},stats:{},badges:{},speakPass:0,daily:{},bestCombo:0,timerBest:0},best.meta||{},{settings:meta.settings});
+      meta.mistakes=meta.mistakes||[]; meta.bosses=meta.bosses||{}; meta.open=meta.open||{}; meta.certs=meta.certs||{}; meta.lread=meta.lread||{}; meta.stats=meta.stats||{}; meta.badges=meta.badges||{}; meta.speakPass=meta.speakPass||0; meta.daily=meta.daily||{}; meta.bestCombo=meta.bestCombo||0; meta.timerBest=meta.timerBest||0;
       saveProgress(); saveMeta();
     }
   }
