@@ -197,6 +197,12 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 @media (prefers-reduced-motion: reduce){ .starburst span{animation:none; opacity:1;} #result-emoji.pop{animation:none;} .pnode.next .pcirc{animation:none;} .bnew .bitem{animation:none;} }
 
 /* ===== Badges ===== */
+.sponsor{display:block; max-width:380px; margin:10px auto; padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--card); text-decoration:none; color:var(--ink); text-align:left;}
+.sponsor .tag{font-size:10px; font-weight:800; color:var(--sub); letter-spacing:.06em; text-transform:uppercase;}
+.sponsor .row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:4px;}
+.sponsor .nm{font-weight:800; font-size:15px;}
+.sponsor .ln{font-size:13px; color:var(--sub); margin-top:2px;}
+.sponsor .cta{flex:none; background:var(--accent); color:#fff; font-weight:800; font-size:12px; padding:7px 11px; border-radius:8px; white-space:nowrap;}
 .combo{display:inline-block; margin-left:6px; padding:2px 9px; border-radius:99px; background:#f2b632; color:#3a2000; font-weight:800; font-size:.85em; animation:starpop .4s cubic-bezier(.2,1.6,.4,1);}
 .combo.lost{background:#e4dbd0; color:#6b5b4b;}
 .tmlow{color:#d63a2a !important;}
@@ -306,6 +312,8 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
             🚀 मात्र ₹29 — भुगतान करें और PDF पाएं
         </a>
     </div>
+
+    <div id="sponsor-wrap"></div>
 
     <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" autocomplete="off">
     <div id="sections"></div>
@@ -5040,6 +5048,31 @@ function saveMeta(){save(K_META,meta);}
 
 /* ================= TEACHER DASHBOARD SYNC ================= */
 const K_NAME='fea_quest_name';
+/* ====== LOCAL SPONSOR (seedha ad, bina AdMob) ======
+   Naya sponsor jodne ke liye neeche SPONSORS me ek {...} line jodo (example comment me hai).
+   'from' aur 'till' (YYYY-MM-DD) ke bahar ad apne aap band ho jata hai. Ek se zyada sponsor ho to baari-baari dikhte hain.
+   Shopkeeper ko dikhane ke liye game link ke aage ?sponsor_demo=1 lagao. */
+const SPONSORS=[
+  // {name:'Sharma Stationery, Mahewa', line:'Copy, pen, kitaben - sab ek jagah', cta:'📞 Call karein', link:'tel:+919999999999', emoji:'🛒', from:'2026-11-01', till:'2026-11-30'},
+];
+const SPONSOR_PITCH={on:false, phone:'917691943998'};   /* on:true karoge to sponsor na hone par "yahan apna ad lagao" card dikhega */
+const SPONSOR_DEMO={name:'Aapki Dukaan ka Naam, Mahewa', line:'Yahan aapka ad roz 50+ students ko dikhega', cta:'📞 Call karein', link:'tel:+917691943998', emoji:'🛒'};
+let SP_PICK=null;
+function safeLink(u){ return /^(https?:\/\/|tel:|mailto:)/i.test(u||'')?u:''; }
+function activeSponsors(){ const t=dayStr(new Date()); return SPONSORS.filter(x=>x&&x.name&&(!x.from||t>=x.from)&&(!x.till||t<=x.till)); }
+function renderSponsor(){
+  const w=$('sponsor-wrap'); if(!w) return; let demo=false; try{ demo=/[?&]sponsor_demo=1/.test(window.location.search); }catch(e){}
+  let list=activeSponsors(); if(!list.length&&demo) list=[SPONSOR_DEMO];
+  if(!list.length){
+    if(SPONSOR_PITCH.on){ w.innerHTML='<a class="sponsor" target="_blank" rel="noopener" href="https://wa.me/'+SPONSOR_PITCH.phone+'?text='+encodeURIComponent('Namaste Rohit Sir, mujhe English Quest me apna ad lagana hai.')+'"><div class="tag">📢 Ad</div><div class="row"><div><div class="nm">Yahan aapka ad dikh sakta hai</div><div class="ln">Local dukaan / coaching — Rohit Sir se baat karein</div></div><span class="cta">💬 WhatsApp</span></div></a>'; }
+    else w.innerHTML='';
+    return;
+  }
+  if(SP_PICK===null) SP_PICK=Math.floor(Math.random()*1000);
+  const x=list[SP_PICK%list.length]; const lk=safeLink(x.link);
+  const inner='<div class="tag">Sponsored</div><div class="row"><div><div class="nm">'+esc((x.emoji?x.emoji+' ':'')+x.name)+'</div>'+(x.line?'<div class="ln">'+esc(x.line)+'</div>':'')+'</div>'+(lk&&x.cta?'<span class="cta">'+esc(x.cta)+'</span>':'')+'</div>';
+  w.innerHTML=lk?('<a class="sponsor" target="_blank" rel="noopener sponsored" href="'+esc(lk)+'">'+inner+'</a>'):('<div class="sponsor">'+inner+'</div>');
+}
 const SHEET_URL='https://script.google.com/macros/s/AKfycbwRWpCXUUqOx7IaDJ2au84upplylXnDXcOIFukupWg6nWD8PsWtBMBBLvgBfAP1t0qg/exec';
 let studentName=load(K_NAME,'');
 const K_PROFILES='fea_quest_profiles', K_CONF='fea_quest_confirmed';
@@ -5212,7 +5245,7 @@ function renderMap(){
   renderToggles();
   $('btn-mistakes').textContent='📓 Mistakes ('+meta.mistakes.length+')';
   $('btn-daily').textContent=meta.daily&&meta.daily[dayStr(new Date())]!==undefined?'🎯 Daily Challenge ✅':'🎯 Daily Challenge +30 XP'; $('btn-timer').textContent='⏱ Timer Round'+(meta.timerBest?' (best '+meta.timerBest+')':'');
-  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')'; renderBadgeStrip();
+  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')'; renderBadgeStrip(); renderSponsor();
 
   const nxt=nextLevel(), cw=$('continue-wrap'); cw.innerHTML='';
   const c=document.createElement('div'); c.className='continue';
