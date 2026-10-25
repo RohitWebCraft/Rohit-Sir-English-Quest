@@ -197,6 +197,13 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 @media (prefers-reduced-motion: reduce){ .starburst span{animation:none; opacity:1;} #result-emoji.pop{animation:none;} .pnode.next .pcirc{animation:none;} .bnew .bitem{animation:none;} }
 
 /* ===== Badges ===== */
+.sp-vid-btn{background:none; border:1px dashed var(--sp-bd); color:inherit; font-size:12.5px; padding:6px 14px; border-radius:99px; cursor:pointer; opacity:.85}
+#sp-vid-ov{position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.82); display:none; align-items:center; justify-content:center; flex-direction:column; gap:10px; padding:12px; box-sizing:border-box}
+#sp-vid-ov.on{display:flex}
+#sp-vid-ov video{max-height:78vh; max-width:100%; border-radius:12px; background:#000}
+#sp-vid-ov .row{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+#sp-vid-ov button,#sp-vid-ov a{background:#c9622b; color:#fff; border:0; border-radius:99px; padding:9px 18px; font-size:14px; font-weight:700; text-decoration:none; cursor:pointer}
+#sp-vid-ov .x{background:#444}
 :root{--sp-a:#fff4d6; --sp-b:#ffd89a; --sp-ink:#3a2200; --sp-sub:#7a5420; --sp-bd:#e0891e; --sp-glow:rgba(224,137,30,.35);}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --sp-a:#3d2b10; --sp-b:#5e3c12; --sp-ink:#fff1d6; --sp-sub:#ecd29b; --sp-bd:#f2b632; --sp-glow:rgba(242,182,50,.35);} }
 :root[data-theme="dark"]{ --sp-a:#3d2b10; --sp-b:#5e3c12; --sp-ink:#fff1d6; --sp-sub:#ecd29b; --sp-bd:#f2b632; --sp-glow:rgba(242,182,50,.35); }
@@ -321,6 +328,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     </div>
 
     <div id="sponsor-wrap"></div>
+    <div style="text-align:center; margin:2px 0 10px"><button type="button" id="sp-vid-btn" class="sp-vid-btn">📢 Sponsor banna chahte hain? Video dekhein</button></div>
 
     <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" autocomplete="off">
     <div id="sections"></div>
@@ -5063,7 +5071,7 @@ const SPONSORS=[
   // {name:'Sharma Stationery, Mahewa', line:'Copy, pen, kitaben - sab ek jagah', cta:'📞 Call karein', link:'tel:+919999999999', emoji:'🛒', from:'2026-11-01', till:'2026-11-30'},
 ];
 const SPONSOR_PITCH={on:false, phone:'917691943998'};   /* on:true karoge to sponsor na hone par "yahan apna ad lagao" card dikhega */
-const SPONSOR_DEMO={name:'Aapki Dukaan ka Naam', line:'Yahan aapka ad roz 50+ students dekhenge', cta:'📞 Call karein', link:'tel:+917691943998', emoji:'🛒'};
+const SPONSOR_DEMO={name:'Aapki Dukaan ka Naam', line:'Yahan aapka ad students ke saamne dikhega', cta:'📞 Call karein', link:'tel:+917691943998', emoji:'🛒'};
 let SP_PICK=null;
 function safeLink(u){ return /^(https?:\/\/|tel:|mailto:)/i.test(u||'')?u:''; }
 function activeSponsors(){ const t=dayStr(new Date()); return SPONSORS.filter(x=>x&&x.name&&(!x.from||t>=x.from)&&(!x.till||t<=x.till)); }
@@ -6164,6 +6172,22 @@ function openSharedCert(){
 if(openSharedCert()){ /* certificate viewer opened */ }
 else if(studentName){ let c=''; try{ c=sessionStorage.getItem(K_CONF)||''; }catch(e){} if(c===nameKey(studentName)) show('map'); else showNameScreen('who'); }
 else { showNameScreen('name'); }
+
+(function(){
+  var btn=document.getElementById('sp-vid-btn'); if(!btn) return;
+  var ov=null;
+  function close(){ if(!ov) return; var v=ov.querySelector('video'); try{v.pause();}catch(e){} v.removeAttribute('src'); try{v.load();}catch(e){} ov.classList.remove('on'); }
+  btn.addEventListener('click',function(){
+    if(!ov){
+      ov=document.createElement('div'); ov.id='sp-vid-ov';
+      ov.innerHTML='<video controls playsinline preload="none"></video><div class="row"><a href="tel:+917691943998">📞 Rohit Sir ko call karein</a><button type="button" class="x">Band karein</button></div>';
+      document.body.appendChild(ov);
+      ov.querySelector('.x').addEventListener('click',close);
+      ov.addEventListener('click',function(e){ if(e.target===ov) close(); });
+    }
+    var v=ov.querySelector('video'); v.src='sponsor-pitch.mp4'; ov.classList.add('on'); try{v.play();}catch(e){}
+  });
+})();
 </script>
 </body>
 </html>

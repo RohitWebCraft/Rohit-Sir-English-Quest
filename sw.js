@@ -24,7 +24,9 @@ self.addEventListener('fetch', function (e) {
   const req = e.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;           /* Google Sheet / Apps Script ko haath nahi lagate */
+  if (url.origin !== self.location.origin) return;
+       /* Google Sheet / Apps Script ko haath nahi lagate */
+  if (/\.(mp4|webm)$/i.test(url.pathname)) return;           /* video seedha browser chalaye (range requests) */
   e.respondWith(networkFirst(e, req));
 });
 
