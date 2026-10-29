@@ -197,6 +197,14 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 @media (prefers-reduced-motion: reduce){ .starburst span{animation:none; opacity:1;} #result-emoji.pop{animation:none;} .pnode.next .pcirc{animation:none;} .bnew .bitem{animation:none;} }
 
 /* ===== Badges ===== */
+#lang-ov{position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; padding:16px; box-sizing:border-box}
+#lang-ov.on{display:flex}
+#lang-ov .lbox{position:relative; background:var(--card); color:var(--ink); border-radius:16px; padding:18px 16px 16px; width:100%; max-width:340px; box-shadow:0 12px 40px rgba(0,0,0,.4)}
+#lang-ov .lbox b{display:block; font-size:1.05rem; margin-bottom:4px; padding-right:28px}
+#lang-ov #lang-ov-l{display:grid; gap:8px; margin-top:12px}
+#lang-ov #lang-ov-l button{background:var(--bg); color:var(--ink); border:1.5px solid var(--line); border-radius:12px; padding:12px; font-size:1rem; font-weight:700; cursor:pointer; text-align:left}
+#lang-ov #lang-ov-l button.on{border-color:var(--accent); background:var(--accent); color:#fff}
+#lang-ov .x{position:absolute; top:8px; right:8px; border:0; background:none; font-size:1.2rem; color:var(--sub); cursor:pointer}
 .sp-vid-btn{background:none; border:1px dashed var(--sp-bd); color:inherit; font-size:12.5px; padding:6px 14px; border-radius:99px; cursor:pointer; opacity:.85}
 #sp-vid-ov{position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.82); display:none; align-items:center; justify-content:center; flex-direction:column; gap:10px; padding:12px; box-sizing:border-box}
 #sp-vid-ov.on{display:flex}
@@ -276,16 +284,17 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <h1>Rohit Sir English Quest</h1>
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
     <div class="card hidden" id="who-card">
-      <div class="q-text-en" style="margin-bottom:14px;">👋 Kya aap <b id="who-name"></b> hain?</div>
-      <button class="next-btn" id="who-yes">✅ Haan, main hi hu — Continue ▶</button>
-      <button class="btn" id="who-no" style="margin-top:10px; width:100%;">🔄 Nahi, main dusra student hu</button>
-      <div class="small" style="margin-top:10px;">Ek tablet par kai students khelte hain, isliye ye poochha ja raha hai.</div>
+      <div class="q-text-en" id="who-q" data-i18n="who_q" style="margin-bottom:14px;">👋 Kya aap <b id="who-name"></b> hain?</div>
+      <button class="next-btn" id="who-yes" data-i18n="who_yes">✅ Haan, main hi hu — Continue ▶</button>
+      <button class="btn" id="who-no" data-i18n="who_no" style="margin-top:10px; width:100%;">🔄 Nahi, main dusra student hu</button>
+      <div class="small" data-i18n="who_note" style="margin-top:10px;">Ek tablet par kai students khelte hain, isliye ye poochha ja raha hai.</div>
     </div>
+    <div style="text-align:center; margin:0 0 10px"><button type="button" class="sp-vid-btn" id="btn-lang-name">🌐 Language / भाषा</button></div>
     <div class="card" id="name-card">
-      <div class="q-text-en" style="margin-bottom:14px;">👋 Apna naam likho</div>
-      <input class="search" id="name-input" type="text" placeholder="Your full name" autocomplete="off" style="margin-bottom:14px;">
-      <button class="next-btn" id="name-start">Start Playing ▶</button>
-      <div class="small" style="margin-top:10px;">Apna poora naam likho (jaise: Sapna Vanshkar). Dusre student ka naam mat likhna. Yeh naam teacher ko progress dikhane ke liye use hota hai. Pehle khela hai to wahi naam likho, progress wapas aa jayega.</div>
+      <div class="q-text-en" data-i18n="name_q" style="margin-bottom:14px;">👋 Apna naam likho</div>
+      <input class="search" id="name-input" type="text" placeholder="Your full name" data-i18n-ph="name_ph" autocomplete="off" style="margin-bottom:14px;">
+      <button class="next-btn" id="name-start" data-i18n="name_start">Start Playing ▶</button>
+      <div class="small" data-i18n="name_note" style="margin-top:10px;">Apna poora naam likho (jaise: Sapna Vanshkar). Dusre student ka naam mat likhna. Yeh naam teacher ko progress dikhane ke liye use hota hai. Pehle khela hai to wahi naam likho, progress wapas aa jayega.</div>
     </div>
   </div>
 
@@ -293,12 +302,12 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
   <div id="screen-map" class="hidden">
     <h1>Rohit Sir English Quest</h1>
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;"><span class="small" id="whoami"></span><button class="btn" id="btn-switch" style="width:auto; padding:6px 12px; font-size:13px; flex:none;">🔄 Student badlo</button></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;"><span class="small" id="whoami"></span><button class="btn" id="btn-switch" data-i18n="btn_switch" style="width:auto; padding:6px 12px; font-size:13px; flex:none;">🔄 Student badlo</button></div>
 
     <div class="stats">
-      <div class="stat"><b id="st-streak">0</b><span>🔥 day streak</span></div>
-      <div class="stat"><b id="st-stars">0</b><span>⭐ stars</span></div>
-      <div class="stat"><b id="st-xp">0</b><span>✨ XP</span></div>
+      <div class="stat"><b id="st-streak">0</b><span data-i18n="st_streak">🔥 day streak</span></div>
+      <div class="stat"><b id="st-stars">0</b><span data-i18n="st_stars">⭐ stars</span></div>
+      <div class="stat"><b id="st-xp">0</b><span data-i18n="st_xp">✨ XP</span></div>
       <div class="stat"><b id="st-rank">-</b><span id="st-rank-l">rank</span></div>
     </div>
     <div class="rankbar"><div id="rank-fill"></div></div>
@@ -309,6 +318,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
       <button class="tg" id="tg-voice"></button>
       <button class="tg" id="tg-hindi"></button>
       <button class="tg" id="tg-view"></button>
+      <button class="tg" id="tg-lang"></button>
     </div>
 
     <button class="bstrip" id="btn-badges"></button>
@@ -320,11 +330,11 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
       <button class="btn" id="btn-timer">⏱ Timer Round</button>
     </div>
     <div class="actions">
-      <button class="btn primary" id="btn-lessons" style="padding:20px 14px; font-size:1.2rem; font-weight:800;">📖 Grammar Lessons (27 topics)</button>
+      <button class="btn primary" id="btn-lessons" data-i18n="btn_lessons" style="padding:20px 14px; font-size:1.2rem; font-weight:800;">📖 Grammar Lessons (27 topics)</button>
     </div>
     <div class="actions">
       <button class="btn" id="btn-mistakes">📓 Mistakes</button>
-      <button class="btn" id="btn-revision">🔁 Quick Revision</button>
+      <button class="btn" id="btn-revision" data-i18n="btn_revision">🔁 Quick Revision</button>
       <button class="btn" id="btn-certs">🎓 Certificates</button>
     </div>
 
@@ -346,23 +356,23 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div id="sponsor-wrap"></div>
     <div style="text-align:center; margin:2px 0 10px"><button type="button" id="sp-vid-btn" class="sp-vid-btn">📢 Sponsor banna chahte hain? Video dekhein</button></div>
 
-    <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" autocomplete="off">
+    <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" data-i18n-ph="search_ph" autocomplete="off">
     <div id="sections"></div>
 
     <footer>Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</footer>
-    <div class="center"><button class="resetbtn" id="btn-reset">Reset my progress</button></div>
+    <div class="center"><button class="resetbtn" id="btn-reset" data-i18n="btn_reset">Reset my progress</button></div>
   </div>
 
   <!-- GRAMMAR LESSONS -->
   <div id="screen-lessons" class="hidden">
     <div class="quiz-header">
-      <button class="back-btn" id="lesson-back">← Back</button>
-      <span>📖 Grammar Lessons</span>
+      <button class="back-btn" id="lesson-back" data-i18n="back">← Back</button>
+      <span data-i18n="lessons_title">📖 Grammar Lessons</span>
     </div>
     <div id="lesson-list-wrap">
-      <div class="small" style="margin-bottom:4px">Pehle lesson padho, phir uska practice quiz pass karo (kam se kam 1 ⭐). 10, 20 aur 27 lessons complete karne par certificate milega.</div>
+      <div class="small" data-i18n="lessons_intro" style="margin-bottom:4px">Pehle lesson padho, phir uska practice quiz pass karo (kam se kam 1 ⭐). 10, 20 aur 27 lessons complete karne par certificate milega.</div>
       <div class="small" id="lesson-progress" style="margin-bottom:8px; font-weight:700"></div>
-      <input class="search" id="lesson-search" type="search" placeholder="🔎 Topic dhoondo: tense, articles, passive…" autocomplete="off">
+      <input class="search" id="lesson-search" type="search" placeholder="🔎 Topic dhoondo: tense, articles, passive…" data-i18n-ph="lesson_ph" autocomplete="off">
       <div id="lesson-list"></div>
     </div>
     <div id="lesson-view" class="hidden"><div id="lesson-body"></div></div>
@@ -389,7 +399,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
   <!-- SPEAK -->
   <div id="screen-speak" class="hidden">
     <div class="quiz-header">
-      <button class="back-btn" id="speak-back">← Back</button>
+      <button class="back-btn" id="speak-back" data-i18n="back">← Back</button>
       <span id="speak-title"></span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="speak-prog"></div></div>
@@ -397,7 +407,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
       <div class="small" id="speak-count"></div>
       <div class="speak-sentence" id="speak-sentence"></div>
       <div class="btnrow">
-        <button class="btn" id="speak-listen">🔊 Listen</button>
+        <button class="btn" id="speak-listen" data-i18n="listen">🔊 Listen</button>
         <button class="btn primary" id="speak-mic">🎤 Speak</button>
       </div>
       <div class="feedback" id="speak-result"></div>
@@ -5285,11 +5295,65 @@ function levelCard(l){
     '<div class="stars">'+(p?'★'.repeat(p.stars)+'☆'.repeat(3-p.stars):'☆☆☆')+'</div>';
   d.onclick=()=>startLevel(l.id); return d;
 }
+/* ===== Bhasha (menu + hint) =====
+   Hint ki bhasha: lang-mr.js / lang-gu.js / lang-ta.js file sirf tab load hoti hai jab student wo bhasha chune.
+   Sawal aur options hamesha English me rehte hain. */
+const K_LANG='fea_quest_lang';
+const LANGS=[{c:'hi',n:'हिन्दी / Hinglish'},{c:'en',n:'English'},{c:'mr',n:'मराठी'},{c:'gu',n:'ગુજરાતી'},{c:'ta',n:'தமிழ்'}];
+window.RSQ_LANG=window.RSQ_LANG||{}; RSQ_LANG.en={ui:{"tg_lang": "🌐 Language", "tg_sound": "🔊 Sound", "tg_voice": "🗣 Voice", "tg_hint": "💡 Hint", "tg_view": "🗺 Map", "on": "ON", "off": "OFF", "view_list": "List", "view_path": "Path", "st_streak": "🔥 day streak", "st_stars": "⭐ stars", "st_xp": "✨ XP", "btn_daily": "🎯 Daily Challenge", "btn_timer": "⏱ Timer Round", "btn_lessons": "📖 Grammar Lessons (27 topics)", "btn_mistakes": "📓 Mistakes", "btn_revision": "🔁 Quick Revision", "btn_certs": "🎓 Certificates", "btn_switch": "🔄 Change student", "btn_reset": "Reset my progress", "search_ph": "🔎 Jump to: Day 125, Resume, because…", "who_q": "👋 Are you {name}?", "who_yes": "✅ Yes, it's me — Continue ▶", "who_no": "🔄 No, I am another student", "who_note": "Many students play on one tablet, so we ask this.", "name_q": "👋 Write your name", "name_ph": "Your full name", "name_start": "Start Playing ▶", "name_note": "Write your full name (for example: Sapna Vanshkar). Do not write another student's name. This name is used to show your progress to the teacher. If you have played before, write the same name to continue.", "back": "← Back", "levels_back": "← Levels", "next": "Next", "listen": "🔊 Listen", "speak": "🎤 Speak", "skip": "Skip", "lessons_title": "📖 Grammar Lessons", "lessons_intro": "First read the lesson, then pass its practice quiz (at least 1 ⭐). You get a certificate after completing 10, 20 and 27 lessons.", "lesson_ph": "🔎 Search topic: tense, articles, passive…", "lang_pick": "Choose language", "lang_note": "Questions stay in English. Only menus and hints change."},h:null};
+let LANG=(function(){ try{ return localStorage.getItem(K_LANG)||'hi'; }catch(e){ return 'hi'; } })(); if(!LANGS.some(x=>x.c===LANG)) LANG='hi';
+function langUi(){ const p=RSQ_LANG[LANG]; return p&&p.ui||null; }
+function t(k,def){ const u=langUi(); return (u&&u[k]!=null)?u[k]:def; }
+function hintFor(hi){ const p=RSQ_LANG[LANG]; return (p&&p.h&&p.h[hi])||hi; }
+function langName(){ const x=LANGS.find(l=>l.c===LANG); return x?x.n:''; }
+function applyLang(){
+  const u=langUi();
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    if(el.dataset.i18nOrig===undefined) el.dataset.i18nOrig=el.innerHTML;
+    const k=el.getAttribute('data-i18n'), tr=u&&u[k];
+    if(k==='who_q'){ const nm=($('who-name')&&$('who-name').textContent)||studentName||''; el.innerHTML=tr?esc(tr).replace('{name}','<b id="who-name"></b>'):el.dataset.i18nOrig; if($('who-name')) $('who-name').textContent=nm; return; }
+    if(tr) el.textContent=tr; else el.innerHTML=el.dataset.i18nOrig;
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    if(el.dataset.i18nPhOrig===undefined) el.dataset.i18nPhOrig=el.getAttribute('placeholder')||'';
+    const tr=u&&u[el.getAttribute('data-i18n-ph')]; el.setAttribute('placeholder',tr||el.dataset.i18nPhOrig);
+  });
+  try{ document.documentElement.setAttribute('lang',LANG==='hi'?'hi':LANG); }catch(e){}
+}
+function loadLangPack(c){
+  return new Promise(function(res,rej){
+    if(RSQ_LANG[c]||c==='hi') return res();
+    const sc=document.createElement('script'); sc.src='lang-'+c+'.js'; sc.onload=function(){ RSQ_LANG[c]?res():rej(); }; sc.onerror=function(){ rej(); };
+    document.head.appendChild(sc);
+  });
+}
+async function setLang(c){
+  try{ await loadLangPack(c); }catch(e){ try{ showToast('Is bhasha ke liye ek baar internet chahiye',false); }catch(x){ window.alert('Is bhasha ke liye ek baar internet chahiye.'); } return false; }
+  LANG=c; try{ localStorage.setItem(K_LANG,c); }catch(e){}
+  applyLang(); try{ if(meta&&meta.settings&&!$('screen-map').classList.contains('hidden')) renderMap(); else renderToggles(); }catch(e){}
+  return true;
+}
+let LANG_OV=null;
+function openLangPicker(){
+  if(!LANG_OV){
+    LANG_OV=document.createElement('div'); LANG_OV.id='lang-ov';
+    LANG_OV.innerHTML='<div class="lbox"><b id="lang-ov-t"></b><div id="lang-ov-n" class="small"></div><div id="lang-ov-l"></div><button type="button" class="x" id="lang-ov-x">✕</button></div>';
+    document.body.appendChild(LANG_OV);
+    LANG_OV.addEventListener('click',function(e){ if(e.target===LANG_OV||e.target.id==='lang-ov-x') LANG_OV.classList.remove('on'); });
+  }
+  $('lang-ov-t').textContent='🌐 '+t('lang_pick','Choose language / भाषा चुनें');
+  $('lang-ov-n').textContent=t('lang_note','Questions stay in English. Only menus and hints change.');
+  const box=$('lang-ov-l'); box.innerHTML='';
+  LANGS.forEach(function(l){ const b=document.createElement('button'); b.type='button'; b.textContent=(l.c===LANG?'✔ ':'')+l.n; if(l.c===LANG) b.className='on';
+    b.onclick=async function(){ b.textContent='…'; const ok=await setLang(l.c); if(ok) LANG_OV.classList.remove('on'); else b.textContent=l.n; }; box.appendChild(b); });
+  LANG_OV.classList.add('on');
+}
 function renderToggles(){
   const s=meta.settings;
-  const set=(id,on,label)=>{const b=$(id); b.textContent=label+': '+(on?'ON':'OFF'); b.classList.toggle('off',!on);};
-  set('tg-sound',s.sound,'🔊 Sound'); set('tg-voice',s.voice,'🗣 Voice'); set('tg-hindi',s.hindi,'🇮🇳 Hindi hint');
-  $('tg-view').textContent='🗺 Map: '+(s.view==='list'?'List':'Path');
+  const set=(id,on,label)=>{const b=$(id); b.textContent=label+': '+(on?t('on','ON'):t('off','OFF')); b.classList.toggle('off',!on);};
+  set('tg-sound',s.sound,t('tg_sound','🔊 Sound')); set('tg-voice',s.voice,t('tg_voice','🗣 Voice')); set('tg-hindi',s.hindi,LANG==='hi'?'🇮🇳 Hindi hint':t('tg_hint','💡 Hint'));
+  $('tg-view').textContent=t('tg_view','🗺 Map')+': '+(s.view==='list'?t('view_list','List'):t('view_path','Path'));
+  $('tg-lang').textContent=t('tg_lang','🌐 Language')+': '+langName();
 }
 function renderMap(){
   $('whoami').textContent='👤 '+(studentName||'');
@@ -5300,9 +5364,9 @@ function renderMap(){
     $('rank-text').textContent=(nr.min-meta.xp)+' XP to '+nr.emoji+' '+nr.name; }
   else { $('rank-fill').style.width='100%'; $('rank-text').textContent='Top rank reached! 👑'; }
   renderToggles();
-  $('btn-mistakes').textContent='📓 Mistakes ('+meta.mistakes.length+')';
-  $('btn-daily').textContent=meta.daily&&meta.daily[dayStr(new Date())]!==undefined?'🎯 Daily Challenge ✅':'🎯 Daily Challenge +30 XP'; $('btn-timer').textContent='⏱ Timer Round'+(meta.timerBest?' (best '+meta.timerBest+')':'');
-  $('btn-certs').textContent='🎓 Certificates ('+Object.keys(meta.certs).length+')'; renderBadgeStrip(); renderSponsor();
+  $('btn-mistakes').textContent=t('btn_mistakes','📓 Mistakes')+' ('+meta.mistakes.length+')';
+  $('btn-daily').textContent=meta.daily&&meta.daily[dayStr(new Date())]!==undefined?t('btn_daily','🎯 Daily Challenge')+' ✅':t('btn_daily','🎯 Daily Challenge')+' +30 XP'; $('btn-timer').textContent=t('btn_timer','⏱ Timer Round')+(meta.timerBest?' (best '+meta.timerBest+')':'');
+  $('btn-certs').textContent=t('btn_certs','🎓 Certificates')+' ('+Object.keys(meta.certs).length+')'; renderBadgeStrip(); renderSponsor();
 
   const nxt=nextLevel(), cw=$('continue-wrap'); cw.innerHTML='';
   const c=document.createElement('div'); c.className='continue';
@@ -5418,7 +5482,7 @@ function itemsForLevel(l){return l.questions.map((q,qi)=>({lid:l.id,qi,q}));}
 function itemsFromLevels(levels){const a=[]; levels.forEach(l=>a.push.apply(a,itemsForLevel(l))); return a;}
 function startSession(cfg){
   S={mode:cfg.mode,title:cfg.title,items:cfg.items,i:0,score:0,xp:0,combo:0,bestCombo:0,day:dayStr(new Date()),levelId:cfg.levelId||null,section:cfg.section||null};
-  touchStreak(); show('quiz'); $('quiz-back').textContent=(LESSON_RET>=0&&cfg.mode==='level')?'← Lesson':'← Levels'; $('quiz-title').textContent=cfg.title; renderItem();
+  touchStreak(); show('quiz'); $('quiz-back').textContent=(LESSON_RET>=0&&cfg.mode==='level')?'← Lesson':t('levels_back','← Levels'); $('quiz-title').textContent=cfg.title; renderItem();
 }
 function startLevel(id){ const l=LEVEL_BY_ID[id]; startSession({mode:'level',title:l.title,items:itemsForLevel(l),levelId:id}); }
 function startBoss(k){
@@ -5465,7 +5529,7 @@ function renderItem(){
   const pill=$('diff-pill'); pill.textContent=q.diff.toUpperCase(); pill.className='diff-pill diff-'+q.diff;
   $('feedback').classList.add('hidden'); $('body').innerHTML='';
   const ctx=$('q-ctx'); ctx.classList.add('hidden');
-  $('q-text-hi').textContent=q.qHi; $('q-text-hi').classList.toggle('hidden',!meta.settings.hindi);
+  $('q-text-hi').textContent=hintFor(q.qHi); $('q-text-hi').classList.toggle('hidden',!meta.settings.hindi);
   let type=(S.mode==='timer')?'mcq':pickType(q), blank=null;
   if(type==='blank'){ blank=makeBlank(q); if(!blank) type='mcq'; }
   if(type==='mcq'){ $('q-text-en').textContent=q.qEn; renderMCQ(q); }
@@ -6129,7 +6193,7 @@ $('btn-reset').onclick=()=>{
 };
 function showNameScreen(mode){
   $('who-card').classList.toggle('hidden',mode!=='who'); $('name-card').classList.toggle('hidden',mode==='who');
-  if(mode==='who') $('who-name').textContent=studentName; else { $('name-input').value=''; $('name-start').disabled=false; $('name-start').textContent='Start Playing ▶'; }
+  if(mode==='who') $('who-name').textContent=studentName; else { $('name-input').value=''; $('name-start').disabled=false; $('name-start').textContent=t('name_start','Start Playing ▶'); }
   show('name'); if(mode!=='who'){ try{ $('name-input').focus(); }catch(e){} }
 }
 function confirmedNow(){ try{ sessionStorage.setItem(K_CONF,nameKey(studentName)); }catch(e){} }
@@ -6210,6 +6274,8 @@ function openSharedCert(){
     return true;
   }catch(e){return false;}
 }
+$('tg-lang').onclick=openLangPicker; $('btn-lang-name').onclick=openLangPicker;
+(function(){ if(LANG!=='hi'){ loadLangPack(LANG).then(function(){ applyLang(); try{ renderToggles(); }catch(e){} }).catch(function(){ LANG='hi'; }); } })();
 if(openSharedCert()){ /* certificate viewer opened */ }
 else if(studentName){ let c=''; try{ c=sessionStorage.getItem(K_CONF)||''; }catch(e){} if(c===nameKey(studentName)) show('map'); else showNameScreen('who'); }
 else { showNameScreen('name'); }
