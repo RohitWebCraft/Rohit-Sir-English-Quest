@@ -205,6 +205,15 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 #lang-ov #lang-ov-l button{background:var(--bg); color:var(--ink); border:1.5px solid var(--line); border-radius:12px; padding:12px; font-size:1rem; font-weight:700; cursor:pointer; text-align:left}
 #lang-ov #lang-ov-l button.on{border-color:var(--accent); background:var(--accent); color:#fff}
 #lang-ov .x{position:absolute; top:8px; right:8px; border:0; background:none; font-size:1.2rem; color:var(--sub); cursor:pointer}
+.sitefoot{margin-top:28px; padding-top:14px; border-top:1px solid var(--line); text-align:left; color:var(--sub); font-size:.78rem; line-height:1.5}
+.sitefoot .fcols{display:grid; gap:14px}
+.sitefoot b{display:block; color:var(--ink); font-size:.82rem; margin-bottom:4px}
+.sitefoot p{margin:0}
+.sitefoot a{display:block; color:var(--accent); text-decoration:none; font-weight:600; padding:3px 0}
+.sitefoot a:hover{text-decoration:underline}
+.sitefoot span{display:block}
+.sitefoot a small{display:block; color:var(--sub); font-weight:400; font-size:.74rem; line-height:1.4; margin-top:1px}
+.sitefoot .fline{text-align:center; margin-top:14px; font-size:.72rem; opacity:.85}
 .sp-vid-btn{background:none; border:1px dashed var(--sp-bd); color:inherit; font-size:12.5px; padding:6px 14px; border-radius:99px; cursor:pointer; opacity:.85}
 #sp-vid-ov{position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.82); display:none; align-items:center; justify-content:center; flex-direction:column; gap:10px; padding:12px; box-sizing:border-box}
 #sp-vid-ov.on{display:flex}
@@ -359,7 +368,22 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" data-i18n-ph="search_ph" autocomplete="off">
     <div id="sections"></div>
 
-    <footer>Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</footer>
+    <footer class="sitefoot">
+      <div class="fcols">
+        <div><b>About</b><p>Rohit Sir English Quest is a free English practice game created by Rohit Choudhari, Master Teacher, Mahewa, Panna (M.P.). Learners practise through levels, quizzes and grammar lessons every day.</p></div>
+        <div><b>More from Rohit Sir</b>
+          <a href="https://rohitwebcraft.github.io/MFE-QUIZZ-FEA/" target="_blank" rel="noopener">📚 MFE Vocabulary Quiz<small>Chapter-wise English vocabulary with meanings, Hindi translations, a timer and a leaderboard.</small></a>
+          <a href="https://rohitwebcraft.github.io/rohit-sir-english-quiz/" target="_blank" rel="noopener">📝 Rohit Sir English Quiz<small>Day-wise English learning quiz, covering Days 17 to 93.</small></a>
+          <a href="https://rohitwebcraft.github.io/resize-photo-20kb/" target="_blank" rel="noopener">📷 FormFit: Photo &amp; Signature Resizer<small>Free tool to resize photos and signatures to 20 KB, 50 KB or 100 KB for exam and government forms. Works in your browser, no login needed.</small></a>
+          <a href="https://rohitwebcraft.github.io/Rohit_Portfolio-/" target="_blank" rel="noopener">👤 Portfolio: Rohit Choudhari<small>Master Teacher and learning-game builder. Explore the work and projects.</small></a>
+        </div>
+        <div><b>Contact</b>
+          <a href="tel:+917691943998">📞 +91 76919 43998</a>
+          <span>📢 Want your business featured in this game? Call to become a sponsor.</span>
+        </div>
+      </div>
+      <div class="fline">Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</div>
+    </footer>
     <div class="center"><button class="resetbtn" id="btn-reset" data-i18n="btn_reset">Reset my progress</button></div>
   </div>
 
