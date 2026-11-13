@@ -214,6 +214,13 @@ a.btn{text-decoration:none; text-align:center; display:block;}
 .sitefoot span{display:block}
 .sitefoot a small{display:block; color:var(--sub); font-weight:400; font-size:.74rem; line-height:1.4; margin-top:1px}
 .sitefoot .fline{text-align:center; margin-top:14px; font-size:.72rem; opacity:.85}
+#screen-map{padding-bottom:78px}
+#tabbar{position:fixed; left:0; right:0; bottom:0; z-index:900; background:var(--card); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px); box-shadow:0 -4px 16px rgba(0,0,0,.12)}
+#tabbar .tabin{max-width:640px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr}
+#tabbar button{background:none; border:0; color:var(--sub); padding:8px 6px 9px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:1px; font-family:inherit; border-top:3px solid transparent}
+#tabbar button span{font-size:1.35rem; line-height:1}
+#tabbar button b{font-size:.78rem}
+#tabbar button.on{color:var(--accent); border-top-color:var(--accent)}
 .sp-vid-btn{background:none; border:1px dashed var(--sp-bd); color:inherit; font-size:12.5px; padding:6px 14px; border-radius:99px; cursor:pointer; opacity:.85}
 #sp-vid-ov{position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.82); display:none; align-items:center; justify-content:center; flex-direction:column; gap:10px; padding:12px; box-sizing:border-box}
 #sp-vid-ov.on{display:flex}
@@ -313,6 +320,7 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div class="tag">Made by Rohit Sir · Level-wise practice from your SAB, TRB &amp; AI Speaking lessons</div>
     <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px;"><span class="small" id="whoami"></span><button class="btn" id="btn-switch" data-i18n="btn_switch" style="width:auto; padding:6px 12px; font-size:13px; flex:none;">🔄 Student badlo</button></div>
 
+    <div id="pg-home">
     <div class="stats">
       <div class="stat"><b id="st-streak">0</b><span data-i18n="st_streak">🔥 day streak</span></div>
       <div class="stat"><b id="st-stars">0</b><span data-i18n="st_stars">⭐ stars</span></div>
@@ -331,8 +339,6 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     </div>
 
     <button class="bstrip" id="btn-badges"></button>
-
-    <div id="continue-wrap"></div>
 
     <div class="actions">
       <button class="btn" id="btn-daily">🎯 Daily Challenge</button>
@@ -365,9 +371,6 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
     <div id="sponsor-wrap"></div>
     <div style="text-align:center; margin:2px 0 10px"><button type="button" id="sp-vid-btn" class="sp-vid-btn">📢 Sponsor banna chahte hain? Video dekhein</button></div>
 
-    <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" data-i18n-ph="search_ph" autocomplete="off">
-    <div id="sections"></div>
-
     <footer class="sitefoot">
       <div class="fcols">
         <div><b>About</b><p>Rohit Sir English Quest is a free English practice game created by Rohit Choudhari, Master Teacher, Mahewa, Panna (M.P.). Learners practise through levels, quizzes and grammar lessons every day.</p></div>
@@ -385,6 +388,18 @@ footer{text-align:center; color:var(--sub); font-size:.75rem; margin-top:28px;}
       <div class="fline">Made by Rohit Sir · Foundation Day 1–12 · Day 13–207 · 47 Grammar Booster levels · 27 Grammar Lessons</div>
     </footer>
     <div class="center"><button class="resetbtn" id="btn-reset" data-i18n="btn_reset">Reset my progress</button></div>
+    </div><!-- /pg-home -->
+
+    <div id="pg-levels" class="hidden">
+      <div id="continue-wrap"></div>
+      <input class="search" id="search" type="search" placeholder="🔎 Jump to: Day 125, Resume, because…" data-i18n-ph="search_ph" autocomplete="off">
+      <div id="sections"></div>
+    </div>
+
+    <nav id="tabbar"><div class="tabin">
+      <button type="button" id="tab-home" class="on"><span>🏠</span><b data-i18n="tab_home">Home</b></button>
+      <button type="button" id="tab-levels"><span>🗺</span><b data-i18n="tab_levels">Levels</b></button>
+    </div></nav>
   </div>
 
   <!-- GRAMMAR LESSONS -->
@@ -5321,11 +5336,19 @@ function celebrate(isCorrect){
 }
 
 /* ================= NAVIGATION ================= */
+/* ===== Do page: Home aur Levels ===== */
+let MAPTAB='home';
+function setMapTab(t){
+  MAPTAB=(t==='levels')?'levels':'home';
+  $('pg-home').classList.toggle('hidden',MAPTAB!=='home'); $('pg-levels').classList.toggle('hidden',MAPTAB!=='levels');
+  $('tab-home').classList.toggle('on',MAPTAB==='home'); $('tab-levels').classList.toggle('on',MAPTAB==='levels');
+  try{ window.scrollTo(0,0); }catch(e){}
+}
 function show(name){
   if(name!=='quiz') timerStop();
   ['name','map','lessons','quiz','speak','result'].forEach(n=>$('screen-'+n).classList.toggle('hidden',n!==name));
   try{window.scrollTo(0,0);}catch(e){}
-  if(name==='map') renderMap();
+  if(name==='map'){ renderMap(); setMapTab(MAPTAB); try{ window.scrollTo(0,0); }catch(e){} }
 }
 let LESSON_RET=-1;   /* index of the lesson the student came from (practice button) */
 function goToMap(){ LESSON_RET=-1; try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(e){} show('map'); }
@@ -6319,6 +6342,7 @@ function openSharedCert(){
     return true;
   }catch(e){return false;}
 }
+$('tab-home').onclick=function(){ setMapTab('home'); }; $('tab-levels').onclick=function(){ setMapTab('levels'); };
 $('tg-lang').onclick=openLangPicker; $('btn-lang-name').onclick=openLangPicker;
 (function(){ if(LANG!=='hi'){ loadLangPack(LANG).then(function(){ applyLang(); try{ renderToggles(); }catch(e){} }).catch(function(){ LANG='hi'; }); } })();
 if(openSharedCert()){ /* certificate viewer opened */ }
